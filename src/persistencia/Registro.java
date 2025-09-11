@@ -1,22 +1,29 @@
 package persistencia;
 
-import java.io.*;
+/**
+ * Una clase para describir en forma genérica un registro capaz de ser
+ * almacenado en un Archivo. Contiene un atributo "activo" que indica si el
+ * registro es válido o no dentro del archivo. Si el registro está marcado como
+ * borrado, el atributo "activo" vale false. Si el registro no está borrado,
+ * "activo" vale true.
+ *
+ */
 import tpg2_prog_2025.*;
+import java.io.*;
 
 public class Registro implements Grabable {
 
     private int nroOrden; // indica la posicion del registro en el archivo 4 bytes
-    private boolean estado; // marca de registro activo. Ocupa 1 byte en disco
-    private Grabable dato; // los datos que seran grabados en el registro
-    // para utilizar la clase Grabable sera necesario que la clase de los datos
-    // herede de la interface
+    private boolean estado; // marca de registro activo. Ocupa 1 byte en disco 
+    private Grabable datos; // los datos que seran grabados en el registro
+    // para utilizar la clase Grabable sera necesario que la clase de los datos herede de la interface
 
     /**
      * Crea un Registro sin datos, marcándolo como inactivo
      */
     public Registro() {
         estado = false;
-        dato = null;
+        datos = null;
     }
 
     /**
@@ -25,10 +32,10 @@ public class Registro implements Grabable {
     public Registro(Grabable d, int orden) {
         nroOrden = orden;
         estado = true;
-        dato = d;
+        datos = d;
     }
 
-    /**
+     /**
      * Accede al valor del nroOrden
      *
      * @return el valor del atributo nroOrden
@@ -44,14 +51,14 @@ public class Registro implements Grabable {
      */
     public void setNroOrden(int nroOrden) {
         this.nroOrden = nroOrden;
-    }
+    }    
 
     /**
      * Determina si el registro es activo o no
      *
      * @return true si es activo, false si no.
      */
-    public boolean getActivo() {
+    public boolean getEstado() {
         return estado;
     }
 
@@ -60,7 +67,7 @@ public class Registro implements Grabable {
      *
      * @param x el nuevo estado
      */
-    public void setActivo(boolean x) {
+    public void setEstado(boolean x) {
         estado = x;
     }
 
@@ -70,28 +77,26 @@ public class Registro implements Grabable {
      * @param d los nuevos datos
      */
     public void setDatos(Grabable d) {
-        dato = d;
+        datos = d;
     }
 
     /**
      * Accede a los datos del registro en memoria
-     * devuelve el tipo Grabable ya que en el archivo se tratan a los datos con ese
-     * tipo
-     * 
+     * devuelve el tipo Grabable ya que en el archivo se tratan a los datos con ese tipo
      * @return una referencia a los datos del registro
      */
     public Grabable getDatos() {
-        return dato;
+        return datos;
     }
+    
 
     /**
      * Carga un Nro.Orden de Articulo por teclado
      */
-    public void cargarNroOrden() {
-        System.out.print("Codigo: ");
-        int orden = Consola.leerInt();
-        nroOrden = orden;
+    public void cargarNroOrden(int orden) {
+        setNroOrden(orden);
     }
+    
 
     /**
      * Calcula el tamaño en bytes del objeto, tal como será grabado en disco.
@@ -101,7 +106,7 @@ public class Registro implements Grabable {
      */
     @Override
     public int tamRegistro() {
-        return dato.tamRegistro() + 5; // suma 5, cantidad de bytes de activo y nroOrden
+        return datos.tamRegistro() + 5; // suma 5, cantidad de bytes de activo y nroOrden 
     }
 
     /**
@@ -112,7 +117,7 @@ public class Registro implements Grabable {
      */
     @Override
     public int tamArchivo() {
-        return dato.tamArchivo();
+        return datos.tamArchivo();
     }
 
     /**
@@ -125,7 +130,7 @@ public class Registro implements Grabable {
         try {
             a.writeInt(nroOrden);
             a.writeBoolean(estado);
-            dato.grabar(a);
+            datos.grabar(a);
         } catch (IOException e) {
             System.out.println("Error al grabar los datos del registro: " + e.getMessage());
             System.exit(1);
@@ -138,15 +143,13 @@ public class Registro implements Grabable {
      * @param a el manejador del archivo de disco desde donde se hará la lectura
      */
     @Override
-    public void leer(RandomAccessFile a) {
+    public void leer(RandomAccessFile a, int val) {
         try {
             nroOrden = a.readInt();
             estado = a.readBoolean();
-            dato.leer(a); // convoca al metodo de lectura especifico a los datos del registro
+            datos.leer(a, val); // convoca al metodo de lectura especifico a los datos del registro
         } catch (IOException e) {
-            // print stack trace
-            System.err.println("Error al leer los datos del registro.");
-            e.printStackTrace();
+            System.out.println("Error al leer los datos del registro: " + e.getMessage());
             System.exit(1);
         }
     }
@@ -157,10 +160,10 @@ public class Registro implements Grabable {
      * leer una cadena de longitud fija desde un archivo.
      *
      * @param arch el archivo desde el cual se lee
-     * @param tam  la cantidad de caracteres a leer
+     * @param tam la cantidad de caracteres a leer
      * @return el String leido
      */
-    public static final String readString(RandomAccessFile arch, int tam) {
+    public static final String leerString(RandomAccessFile arch, int tam) {
         String cad = "";
 
         try {
@@ -170,7 +173,6 @@ public class Registro implements Grabable {
             }
             cad = new String(vector, 0, tam);
         } catch (IOException e) {
-//            e.printStackTrace();
             System.out.println("Error al leer una cadena: " + e.getMessage());
             System.exit(1);
         }
@@ -178,16 +180,15 @@ public class Registro implements Grabable {
     }
 
     /**
-     * Graba en un archivo un String de "tam" caracteres. Se declara static y
-     * publico para
+     * Graba en un archivo un String de "tam" caracteres. Se declara static y publico para
      * que pueda ser usado en forma global por cualquier clase que requiera
      * grabar una cadena de longitud fija en un archivo.
      *
      * @param arch el archivo en el cual se graba
-     * @param cad  la cadena a a grabar
-     * @param tam  la cantidad de caracteres a grabar
+     * @param cad la cadena a a grabar
+     * @param tam la cantidad de caracteres a grabar
      */
-    public static final void writeString(RandomAccessFile arch, String cad, int tam) {
+    public static void writeString(RandomAccessFile arch, String cad, int tam) {
         try {
             int i;
             char vector[] = new char[tam];
@@ -203,24 +204,26 @@ public class Registro implements Grabable {
             System.exit(1);
         }
     }
-
+    
     /**
      * Muestra un registro por consola estandar
      */
     @Override
-    public void mostrarRegistro() {
-//        System.out.println("Numero de orden: " + nroOrden);
-        dato.mostrarRegistro();
-//        System.out.println("Activo: " + getActivo());
-//        System.out.println("\t");
+    public void mostrarRegistro(int val, boolean activos) {
+        if(val == 0)
+            getDatos().mostrarRegistro(val, activos); 
+        if(activos && val != 0 && getEstado())
+            getDatos().mostrarRegistro(val, activos); // que sería lo mismo que System.out.print(reg.getData())
+        if(!activos && val != 0)
+            getDatos().mostrarRegistro(val, activos); // que sería lo mismo que System.out.print(reg.getData())
     }
 
     /**
      * Muestra un registro por consola estandar
      */
     @Override
-    public void cargarDatos() {
-        dato.cargarDatos();
+    public void cargarDatos(int val) {
+        datos.cargarDatos(val);
     }
 
 }

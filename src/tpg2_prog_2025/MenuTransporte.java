@@ -5,10 +5,263 @@
  */
 package tpg2_prog_2025;
 
+import datos.*;
+import persistencia.*;
+import tpg2_prog_2025.GestorEmpresa.*;
+import static tpg2_prog_2025.GestorEmpresa.existeDni;
+
 /**
  *
  * @author alvar
  */
 public class MenuTransporte {
+    private static Archivo archiTransp;
+    private static Registro reg; 
+    private static Transporte transporte;
+    
+    
+    MenuTransporte(){
+        try{
+            setArchiTransp(new Archivo("Transporte.dat", new Transporte()));
+        } catch(ClassNotFoundException e){
+            Consola.emitirMensajeLN("Error al crear los descriptores de archivos: " + e.getMessage());
+            System.exit(1);
+        }
+        setReg(new Registro());
+        setTransporte(new Transporte);
+        getReg().setEstado(getTransporte());
+    }
+    
+    
+    public static void mostrarMenuTransporte(){
+        Consola.emitirMensajeLN("-ACTUALIZACION DE TRANSPORTE-");
+        Consola.emitirMensajeLN("1. Alta de transporte");
+        Consola.emitirMensajeLN("2. Baja de transporte");
+        Consola.emitirMensajeLN("3. Modificacion de transporte");
+        Consola.emitirMensaje("Elija una opcion: ");
+    }
+    
+    
+    public static void actualizacionTransporte(){
+        
+        int op = -1;
+        while (op != 1 || op != 2 || op != 3) {
+            mostrarMenuTransporte();
+            op = Consola.leerInt();
+            switch (op) {
+                case 1:
+                    Consola.emitirMensaje("Ingrese los datos del transporte: ");
+                    cargaTransporte();
+                    break;
+                case 2:
+                    //bajaTransporte();
+                    break;
+                case 3:
+                    //modificacionTransporte();
+                    break;
+            }
+        }
+
+       
+    }
+    
+    private static void cargaTransporte(){
+        archiTransp.abrirParaLeerEscribir();
+        try {
+            do {
+                reg = leerDatosTransp();
+                archiTransp.cargarUnRegistro(reg);
+            } while (Consola.confirmar());
+        } catch (Exception e) {
+            Consola.emitirMensajeLN("Error al cargar el archivo: " + e.getMessage());
+            System.exit(1);
+        }
+        archiTransp.cerrarArchivo();
+    }
+    
+    //consulta sobre el dni del conductor y luego sobre el codigo del transporte hasta que ambos ingresos 
+    //sean correctos (que no existan) para poder continuar con la carga de los demas datos
+    private static Registro leerDatosTransp() {
+        Consola.emitirMensajeLN("1. Transporte para personas");
+        Consola.emitirMensajeLN("2. Transporte de mercaderia");
+        Consola.emitirMensaje("Elija una opcion: ");
+        int t = Consola.leerInt();
+        
+        
+        Registro aux = null;
+        getTransporte().cargarDatos(0);
+        switch (t) {
+
+            case 1:
+                long dni;
+                do {
+                    Consola.emitirMensajeLN("DNI del conductor: ");
+                    dni = Consola.leerInt();
+                    if (!existeDni(dni)) {
+                        Consola.emitirMensajeLN("Dni no existente.");
+                        dni = -1; //  Invalidar dni si ya existe el conductor, 
+                        //  para que vuelva a pedir otro dni 
+                    }
+                } while (dni < 0);
+                int cod;
+              
+                do {
+                    Consola.emitirMensajeLN("Codigo del transporte: ");
+                    cod = Consola.leerInt();
+                    if (obtenerTransporte(cod) != null) {
+                        Consola.emitirMensajeLN("Alta Existente.");
+                        cod = -1; //  Invalidar codigo si ya existe el conductor, 
+                        //  para que vuelva a pedir otro cod 
+                    }
+                } while (cod < 0 || cod > 100);
+                TransportePersona tP = new TransportePersona();
+                tP.setDni(dni);
+                tP.setCodT(cod);
+                tP.cargarDatos();
+                aux = new Registro(tP, tp.getNroOrden());
+                break;
+            case 2:
+
+                do {
+                    Consola.emitirMensajeLN("DNI del conductor: ");
+                    dni = Consola.leerInt();
+                    if (!existeDni(dni)) {
+                        Consola.emitirMensajeLN("Dni no existente.");
+                        dni = -1; //  Invalidar dni si ya existe el conductor, 
+                        //  para que vuelva a pedir otro dni 
+                    }
+                } while (dni < 0 );
+                do {
+                    Consola.emitirMensajeLN("Codigo del transporte: ");
+                    cod = Consola.leerInt();
+                    if (obtenerTransporte(cod) != null) {
+                        Consola.emitirMensajeLN("Alta Existente.");
+                        cod = -1; //  Invalidar codigo si ya existe el conductor, 
+                        //  para que vuelva a pedir otro dni 
+                    }
+                } while (cod < 0 || cod > 100);
+
+                TransporteMercaderia tM = new TransporteMercaderia();
+                tM.setDni(dni);
+                tM.setCodT(cod);
+                tM.cargarDatos();
+                aux = new Registro(tM, tM.getNroOrden());
+                break;
+        }
+
+        return aux;
+
+    }
+    
+    //baja logica de los transporte
+    private void bajaDeTransporte() {
+        
+        int op = -1;
+        while (op != 2) {
+            Consola.emitirMensaje("Ingrese el codigo de transporte: ");
+            int cod = Consola.leerInt();        
+            
+            Registro aux = obtenerTransporte(cod);
+            if(aux != null){
+                Transporte t = (Transporte) aux.getDatos();
+                t.mostrarRegistro();
+                Consola.emitirMensaje("¿Confirmar la baja? 1. Aceptar ** 2. Cancelar");
+                int conf = Consola.leerInt();
+                if(conf == 1){
+                    if(archiTransp.bajaRegistro(aux)){
+                        Consola.emitirMensajeLN("Baja exitosa");
+                    } 
+                } else {
+                    Consola.emitirMensajeLN("Baja cancelada");
+                }
+            } else {
+                Consola.emitirMensajeLN("No existe transporte con ese codigo");
+            }
+            
+            Consola.emitirMensajeLN("Desea dar de baja otro Transporte? 1.SI 2.NO");
+            op = Consola.leerInt();
+        }
+
+    }
+    //metodo que me va a devolver un registro con un transporte dentro
+    private static Registro obtenerTransporte(int cod) {
+        archiTransp.abrirParaLectura();
+        while (!archiTransp.eof()) {                                 //mientras no llegue al final del archivo
+            Registro reg = archiTransp.leerRegistro();               //paso los metadatos del registro a una referencia del mismo tipo
+            if (reg.getEstado()) {
+                Transporte t = (Transporte) reg.getDatos();     //si esta activa paso los datos del objeto que tiene registro a una referencia Transprote
+                if (t.getCodT() == cod) {                       //pregunto por la igual de codigos
+                    archiTransp.cerrarArchivo();
+                    return reg;
+                }
+            }
+        }
+        archiTransp.cerrarArchivo();
+        return null;
+    }
+
+    //modifica los datos del transporte salvo el codigo del transporte
+    private static void modificarTransporte(){
+        int op = -1;
+        while (op != 0){
+            Consola.emitirMensaje("Codigo de transporte a modificar: ");
+            int cod = Consola.leerInt();
+            Registro aux = obtenerTransporte(cod);
+            if (aux != null) {
+                Transporte auxT = aux.getDatos();
+                
+                auxT.mostrarDatos();
+                
+                if (auxT instanceof TransportePersona){
+                    TransportePersona t = (TransportePersona) aux;
+                    Consola.emitirMensajeLN("Modificar transporte de personas: ");
+                    t.cargarDatos();
+                    reg.setDatos(t);
+                } else if (auxT instanceof TransporteMercaderia){
+                    TransporteMercaderia t = (TransporteMercaderia) aux;
+                    Consola.emitirMensajeLN("Modificar transporte de mercaderia: ");
+                    t.cargarDatos();
+                    reg.setDatos(t);
+                }
+                
+                archiTransp.abrirParaLeerEscribir();
+                archiTransp.grabarRegistro(reg);
+                archiTransp.cerrarArchivo();
+                Consola.emitirMensajeLN("Modificaciones Hechas !!");
+            } else {
+                Consola.emitirMensajeLN("No existe transporte con ese codigo");
+            }
+
+
+            Consola.emitirMensajeLN("Desea modificar otro Transporte? 1.SI 2.NO");
+            op = Consola.leerInt();
+        }
+        
+    }
+//--------------------------------------------------------------------
+    public static Archivo getArchiTransp() {
+        return archiTransp;
+    }
+
+    public static Registro getReg() {
+        return reg;
+    }
+
+    public static Transporte getTransporte() {
+        return transporte;
+    }
+
+    public static void setArchiTransp(Archivo archiTransp) {
+        MenuTransporte.archiTransp = archiTransp;
+    }
+
+    public static void setReg(Registro reg) {
+        MenuTransporte.reg = reg;
+    }
+
+    public static void setTransporte(Transporte transporte) {
+        MenuTransporte.transporte = transporte;
+    }
+    
     
 }

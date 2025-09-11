@@ -10,9 +10,10 @@ import java.io.*;
 
 public class Archivo {
 
-    private File fd; // descriptor del archivo para acceder a sus propiedades externas
-    private RandomAccessFile maestro; // objeto para acceder al contenido del archivo
-    private Grabable tipo; // representa al tipo de objeto que se puede grabar en el archivo
+    private File fd; // descriptor del archivo para acceder a sus propiedades externas 
+    private RandomAccessFile maestro; // objeto para acceder al contenido del archivo 
+    private Grabable tipo; // representa al tipo de objeto que se puede grabar en el archivo 
+    private Registro reg; // auxiliar para operaciones internas 
 
     /**
      * Crea un manejador para el Archivo, asociando al mismo un nombre a modo de
@@ -23,18 +24,18 @@ public class Archivo {
      * hacerse con el método abrirParaLeerEscribir().
      *
      * @param nombre es el nombre físico del archivo a crear
-     * @param r      una instancia de la clase a la que pertenecen los objetos cuyos
-     *               datos serán grabados. La instancia referida por r NO será
-     *               grabada en el
-     *               archivo
+     * @param r una instancia de la clase a la que pertenecen los objetos cuyos
+     * datos serán grabados. La instancia referida por r NO será grabada en el
+     * archivo
      * @throws ClassNotFoundException si no se informa correctamente el tipo de
-     *                                registro a grabar
+     * registro a grabar
      */
     public Archivo(String nombre, Grabable r) throws ClassNotFoundException {
         if (r == null) {
             throw new ClassNotFoundException("Clase incorrecta o inexistente para el tipo de registro");
         }
         tipo = r;
+        reg = new Registro(r, 0);
         fd = new File(nombre);
     }
 
@@ -42,7 +43,7 @@ public class Archivo {
      * Acceso al descriptor del archivo
      *
      * @return un objeto de tipo File con las propiedades de file system del
-     *         archivo
+     * archivo
      */
     public File getFd() {
         return fd;
@@ -52,7 +53,7 @@ public class Archivo {
      * Acceso al manejador del archivo binario
      *
      * @return un objeto de tipo RandomAccessFile que permite acceder al bloque
-     *         físico de datos en disco, en forma directa
+     * físico de datos en disco, en forma directa
      */
     public RandomAccessFile getMaestro() {
         return maestro;
@@ -62,13 +63,13 @@ public class Archivo {
      * Acceso al descriptor de la clase del registro que se graba en el archivo
      *
      * @return una cadena con el nombre de la clase del registro usado en el
-     *         archivo
+     * archivo
      */
     public String getTipoRegistro() {
         return tipo.getClass().getName();
     }
 
-    /**
+     /**
      * crea el Archivo vacio
      */
     public void crearArchivoVacio(Registro reg) {
@@ -76,18 +77,18 @@ public class Archivo {
         try {
             for (int i = 0; i < reg.tamArchivo(); i++) {
                 reg.setNroOrden(i);
-                reg.setActivo(false);
-
+                reg.setEstado(false);
+                
                 buscarRegistro(i);
                 grabarRegistro(reg);
             }
         } catch (Exception e) {
             System.out.println("Error al crear el archivo vacio: " + e.getMessage());
             System.exit(1);
-        }
+        }        
         cerrarArchivo();
     }
-
+    
     /**
      * Borra el Archivo del disco
      */
@@ -99,7 +100,7 @@ public class Archivo {
      * Cambia el nombre del archivo
      *
      * @param nuevo otro Archivo, cuyo nombre (o file descriptor) será dado al
-     *              actual
+     * actual
      */
     public void renombrarArchivo(Archivo nuevo) {
         fd.renameTo(nuevo.fd);
@@ -153,23 +154,21 @@ public class Archivo {
      * @param i número relativo del registro que se quiere acceder
      */
     public void buscarRegistro(long i) {
-        Registro reg = new Registro(tipo, 0);
         try {
             maestro.seek(0);
             maestro.seek(i * reg.tamRegistro());
         } catch (IOException e) {
-            System.out.println("Error al posicionar en el registro número " + i);
-            e.printStackTrace();
+            System.out.println("Error al posicionar en el registro número " + i + ": " + e.getMessage());
             System.exit(1);
         }
-
+        
     }
 
     /**
      * Ubica el puntero de registro activo en la posición del byte número b
      *
      * @param b número del byte que se quiere acceder, contando desde el
-     *          principio del archivo
+     * principio del archivo
      * @throws IOException si hubo problema en el posicionamiento
      */
     public void buscarByte(long b) {
@@ -201,7 +200,6 @@ public class Archivo {
      * @return el número del registro actual
      */
     public long numeroRegistro() {
-        Registro reg = new Registro(tipo, 0);
         try {
             return maestro.getFilePointer() / reg.tamRegistro();
         } catch (IOException e) {
@@ -247,7 +245,6 @@ public class Archivo {
      * @return el número de registros del archivo
      */
     public long cantidadRegistros() {
-        Registro reg = new Registro(tipo, 0);
         try {
             return maestro.length() / reg.tamRegistro();
         } catch (IOException e) {
@@ -303,9 +300,8 @@ public class Archivo {
      * @throws IOException si hubo problema en la operación
      */
     public Registro leerRegistro() {
-        Registro reg = new Registro(tipo, 0);
         try {
-            reg.leer(maestro);
+            reg.leer(maestro, 0);
             return reg;
         } catch (Exception e) {
             System.out.println("Error al leer el registro: " + e.getMessage());
@@ -331,39 +327,38 @@ public class Archivo {
             try {
                 buscarRegistro(r.getNroOrden());
                 Registro x = leerRegistro();
-                if (!x.getActivo())
+                if(!x.getEstado())
                     grabarRegistro(r);
                 else
                     System.out.println("El registro que desea grabar ya existe. . . ");
                 resp = true;
-            } catch (Exception e) {
+                }
+            catch (Exception e) {
                 System.out.println("Error al grabar el registro: " + e.getMessage());
                 System.exit(1);
             }
         }
         return resp;
     } /*
-       * 
-       * /**
-       * Carga un solo registro
-       *
-       * @param r registro a agregar
-       * 
-       * @return true si fue posible agregar el registro - false si no fue posible
-       */
-
+    
+    /**
+     * Carga un solo registro
+     *
+     * @param r registro a agregar
+     * @return true si fue posible agregar el registro - false si no fue posible
+     */
     public void cargarUnRegistro(Registro r) {
         abrirParaLeerEscribir();
         try {
-            grabarRegistro(r);
+                grabarRegistro(r);
         } catch (Exception e) {
             System.out.println("Error al grabar el registro: " + e.getMessage());
             System.exit(1);
         }
 
-        cerrarArchivo();
-    }
-
+        cerrarArchivo();     
+}
+ 
     /**
      * Borra un registro del archivo. La clase del registro buscado debe
      * coincidir con la clase indicada para el archivo al invocar al
@@ -376,7 +371,6 @@ public class Archivo {
      */
     public boolean bajaRegistro(Registro r) {
         boolean resp = false;
-        Registro reg = new Registro(tipo, 0);
 
         if (r != null && (tipo.getClass() == r.getDatos().getClass())) {
             abrirParaLeerEscribir();
@@ -385,8 +379,8 @@ public class Archivo {
                 if (!eof()) {
 
                     reg = leerRegistro();
-                    if (reg.getActivo()) {
-                        reg.setActivo(false);
+                    if (reg.getEstado()) {
+                        reg.setEstado(false);
                         irPrincipioArchivo();
                         buscarRegistro(r.getNroOrden());
                         grabarRegistro(reg);
@@ -415,11 +409,10 @@ public class Archivo {
      *
      * @param r registro con los nuevos datos
      * @return true si fue posible modificar el registro - false si no fue
-     *         posible
+     * posible
      */
     public boolean modificarRegistro(Registro r) {
         boolean resp = false;
-        Registro reg;
 
         if (r != null && (tipo.getClass() == r.getDatos().getClass())) {
             abrirParaLeerEscribir();
@@ -427,8 +420,8 @@ public class Archivo {
                 buscarRegistro(r.getNroOrden());
                 if (!eof()) {
                     reg = leerRegistro();
-                    if (reg.getActivo()) {
-                        reg.cargarDatos();
+                    if (reg.getEstado()) {
+                        reg.cargarDatos(1);
                         irPrincipioArchivo();
                         buscarRegistro(r.getNroOrden());
                         grabarRegistro(reg);
@@ -449,12 +442,38 @@ public class Archivo {
         return resp;
     }
 
+    public boolean mostrarRegistro(Registro r) {
+        boolean resp = false;
+
+        if (r != null && (tipo.getClass() == r.getDatos().getClass())) {
+            abrirParaLeerEscribir();
+            try {
+                buscarRegistro(r.getNroOrden());
+                if (!eof()) {
+                    reg = leerRegistro();
+                    if (reg.getEstado()) {
+                        reg.getDatos().mostrarRegistro(2, true);
+                        resp = true;
+                    } else {
+                        System.out.println("El registro no se encuentra activo\n");
+                    }
+                } else {
+                    System.out.println("El registro no se encuentra \n");
+                }
+            } catch (Exception e) {
+                System.out.println("Error al mostrar el registro: " + e.getMessage());
+                System.exit(1);
+            }
+            cerrarArchivo();
+        }
+        return resp;
+    }
+
     /**
      * Elimina físicamente los registros que estuvieran marcados como borrados.
      * El Archivo queda limpio, pero sale cerrado.
      */
     public void depurar() {
-        Registro reg;
         try {
             Archivo temp = new Archivo("temporal.dat", tipo);
             temp.abrirParaLeerEscribir();
@@ -462,7 +481,7 @@ public class Archivo {
             this.abrirParaLectura();
             while (!this.eof()) {
                 reg = this.leerRegistro();
-                if (reg.getActivo()) {
+                if (reg.getEstado()) {
                     temp.grabarRegistro(reg);
                 }
             }

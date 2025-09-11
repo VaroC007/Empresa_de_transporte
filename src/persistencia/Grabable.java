@@ -35,17 +35,19 @@ public interface Grabable {
      *
      * @param a el archivo donde se hará la lectura
      */
-    void leer(RandomAccessFile a);
+    void leer(RandomAccessFile a, int val);
     
     /**
      * Muestra un registro por consola estandar
      */
-    void mostrarRegistro();
+    void mostrarRegistro(int val, boolean activo);
     
     /**
      * Carga datos de un registro por consola estandar
      */
-    void cargarDatos();
+    void cargarDatos(int val);
+    // si val esta en 0 no ingresaremos la clave del registro
+    // ya que estamos modificando y no modificamos la clave que determina su ubicacion
 
     
 }
