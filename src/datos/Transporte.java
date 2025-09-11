@@ -4,17 +4,15 @@
  */
 package datos;
 
-import Principal.Consola;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import persistencia.Grabable;
-import persistencia.Registro;
-import java.io.*;
 
 /**
  *
  * @author Julian Novoa
  */
-public abstract class Transporte implements Grabable {
-
+public abstract class Transporte implements Grabable{
     protected int codT;
     protected char tipo; //p personas, m mercaderias
     protected int horas;
