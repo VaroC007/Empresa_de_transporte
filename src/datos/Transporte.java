@@ -7,6 +7,7 @@ package datos;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import persistencia.Grabable;
+import tpg2_prog_2025.Consola;
 
 /**
  *
