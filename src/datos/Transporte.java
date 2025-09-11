@@ -13,13 +13,13 @@ import tpg2_prog_2025.Consola;
  *
  * @author Julian Novoa
  */
-public abstract class Transporte implements Grabable{
+public abstract class Transporte implements Grabable, ICalculable {
+
     protected int codT;
     protected char tipo; //p personas, m mercaderias
     protected int horas;
     protected long dniConductor;
     protected double extra;  //monto calculado
-    protected boolean estado; // activo inactivo
 
     private static int TAMARCHIVO = 100;
     private static int TAMREG = 26; //bytes
@@ -29,7 +29,7 @@ public abstract class Transporte implements Grabable{
         this.tipo = 'p';
         this.dniConductor = 0;
         this.extra = 0.0;
-        this.estado = true;
+
     }
 
     @Override
@@ -48,16 +48,12 @@ public abstract class Transporte implements Grabable{
         cargarTipo();
         cargarHoras();
         cargarDniConductor();
-        cargarExtra();
-        this.estado = true;
     }
 
     public void cargarDatosSinClave() {
         cargarTipo();
         cargarHoras();
         cargarDniConductor();
-        cargarExtra();
-        this.estado = true;
     }
 
     private void cargarCodT() {
@@ -97,14 +93,18 @@ public abstract class Transporte implements Grabable{
         this.dniConductor = dc;
     }
 
-    private void cargarExtra() {
+    /*private void cargarExtra() {
         double e;
         do {
             Consola.emitirMensaje("Extra: $");
             e = Consola.leerDouble();
         } while (e <= 0);
         this.extra = e;
-    }
+    }*/
+    @Override
+    public abstract double calcularExtra();
+    
+    
 
     @Override
     public void grabar(RandomAccessFile file) {
@@ -141,7 +141,6 @@ public abstract class Transporte implements Grabable{
     @Override
     public String toString() {
         String tipoStr = (tipo == 'P' || tipo == 'p') ? "Personas" : "Mercaderias";
-        String estadoStr = estado ? "Activo" : "Inactivo";
 
         return "Transporte {"
                 + "Codigo=" + codT
@@ -149,7 +148,6 @@ public abstract class Transporte implements Grabable{
                 + ", Horas=" + horas
                 + ", DNI Conductor=" + dniConductor
                 + ", Extra=$" + extra
-                + ", Estado=" + estadoStr
                 + '}';
     }
 }

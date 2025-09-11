@@ -10,7 +10,7 @@ import tpg2_prog_2025.Consola;
  *
  * @author Julian Novoa
  */
-public class TransportePersonas extends Transporte implements ICalculable{
+public class TransportePersonas extends Transporte {
 
     private int personas;
 

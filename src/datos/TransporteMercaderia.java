@@ -10,7 +10,7 @@ import tpg2_prog_2025.Consola;
  *
  * @author Julian Novoa
  */
-public class TransporteMercaderia extends Transporte implements ICalculable {
+public class TransporteMercaderia extends Transporte  {
 
     private double toneladas;
     private boolean esPeligroso;
