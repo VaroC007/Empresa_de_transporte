@@ -22,7 +22,7 @@ public class TransportePersonas extends Transporte {
     public int getPersonas() {
         return personas;
     }
-
+    
     private void setPersonas(int personas) {
         if (personas < 0) {
             throw new IllegalArgumentException("La cantidad de personas no puede ser negativa.");
@@ -40,8 +40,8 @@ public class TransportePersonas extends Transporte {
     }
     
     @Override
-    public void cargarDatos(){
-        super.cargarDatos();
+    public void cargarDatos(int val){
+        super.cargarDatos(val);
         cargarPersonas();
         this.extra=calcularExtra();
     }

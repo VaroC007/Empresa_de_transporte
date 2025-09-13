@@ -22,7 +22,7 @@ public abstract class Transporte implements Grabable, ICalculable {
     protected double extra;  //monto calculado
 
     private static int TAMARCHIVO = 100;
-    private static int TAMREG = 26; //bytes
+    private static int TAMREG = 25; //bytes
 
     public Transporte() {
         this.codT = 0;
@@ -32,6 +32,28 @@ public abstract class Transporte implements Grabable, ICalculable {
 
     }
 
+    public long getDniConductor() {
+        return dniConductor;
+    }
+
+    public int getCodT() {
+        return codT;
+    }
+
+    public char getTipo() {
+        return tipo;
+    }
+
+    public int getHoras() {
+        return horas;
+    }
+
+    public double getExtra() {
+        return extra;
+    }
+
+    
+    
     @Override
     public int tamRegistro() {
         return TAMREG;
@@ -43,19 +65,20 @@ public abstract class Transporte implements Grabable, ICalculable {
     }
 
     @Override
-    public void cargarDatos() {
-        cargarCodT();
+    public void cargarDatos(int val) {
+        if (val == 0) {
+            cargarCodT();
+        }
         cargarTipo();
         cargarHoras();
         cargarDniConductor();
     }
 
-    public void cargarDatosSinClave() {
+    /*public void cargarDatosSinClave() {
         cargarTipo();
         cargarHoras();
         cargarDniConductor();
-    }
-
+    }*/
     private void cargarCodT() {
         int c;
         do {
@@ -103,8 +126,6 @@ public abstract class Transporte implements Grabable, ICalculable {
     }*/
     @Override
     public abstract double calcularExtra();
-    
-    
 
     @Override
     public void grabar(RandomAccessFile file) {
@@ -121,21 +142,46 @@ public abstract class Transporte implements Grabable, ICalculable {
     }
 
     @Override
-    public void leer(RandomAccessFile file) {
+    public void leer(RandomAccessFile file, int val) {
         try {
-            codT = file.readInt();
+            if (val == 0) {
+                codT = file.readInt();
+            }
             tipo = file.readChar();
             horas = file.readInt();
             dniConductor = file.readLong();
             extra = file.readDouble();
         } catch (IOException e) {
-            e.printStackTrace();
+            Consola.emitirMensajeLN("error al leer el registro: " + e.getMessage());
+            System.exit(1);
         }
     }
 
+    public boolean equals(Transporte x) {
+        if (x == null) {
+            return false;
+        }
+        return (x.codT == this.codT);
+    }
+
     @Override
-    public void mostrarRegistro() {
-        Consola.emitirMensajeLN(toString());
+    public void mostrarRegistro(int val, boolean activo) {
+        if (!activo) {
+            return;
+        }
+
+        switch (val) {
+            case 0:
+                Consola.emitirMensajeLN("Cod.T        Tipo        Horas        Dni cond.        Extra");
+                break;
+            case 1:
+                Consola.emitirMensajeLN(toString());
+                break;
+            case 2:
+                String tipoSimple = (tipo == 'P' || tipo == 'p') ? "Personas" : "Mercaderias";
+                System.out.println("Transporte: (" + codT + ", " + tipoSimple + ")");
+                break;
+        }
     }
 
     @Override

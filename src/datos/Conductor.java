@@ -5,6 +5,7 @@
  */
 package datos;
 
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import persistencia.*;
 import tpg2_prog_2025.Consola;
@@ -14,9 +15,12 @@ import tpg2_prog_2025.Consola;
  * @author alvar
  */
 public class Conductor implements Grabable {
-   
+
     private long dni;
-    private String Ape_Nom;
+    private String Ape_Nom; //cadena de 20 caracteres
+
+    private static int TAMAREG = 48;
+    private static int TAMARCHIVO = 100;
 
     public Conductor() {
         this.dni = 0;
@@ -64,34 +68,61 @@ public class Conductor implements Grabable {
     }
 
     @Override
-    public void cargarDatos() {
-        cargarDni();
+    public void cargarDatos(int val) {
+        if (val == 0) {
+            cargarDni();
+        }
         cargarNombre();
     }
 
     @Override
     public int tamArchivo() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return TAMARCHIVO;
     }
 
     @Override
     public int tamRegistro() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return TAMAREG;
     }
 
     @Override
     public void grabar(RandomAccessFile a) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            a.writeLong(dni);
+            Registro.writeString(a, Ape_Nom, 20);
+        } catch (IOException e) {
+            Consola.emitirMensajeLN("Error al grabar registro: " + e.getMessage());
+        }
     }
 
     @Override
-    public void leer(RandomAccessFile a) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void leer(RandomAccessFile a, int val) {
+        try {
+            if (val == 0) {
+                this.dni = a.readLong();
+            }
+            this.Ape_Nom = Registro.leerString(a, 20).trim();
+        }catch(IOException e){
+            Consola.emitirMensajeLN("Error al leer el registro: "+e.getMessage());
+        }
     }
 
     @Override
-    public void mostrarRegistro() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void mostrarRegistro(int val, boolean activo) {
+        if(!activo){
+            return;
+        }
+        switch(val){
+            case 0:
+                Consola.emitirMensajeLN("Dni          Nombre conductor");
+                break;
+            case 1:
+                Consola.emitirMensajeLN(toString());
+                break;
+            case 2:
+                Consola.emitirMensajeLN("Consductor: "+this.Ape_Nom);
+                break;
+        }
     }
 
     @Override

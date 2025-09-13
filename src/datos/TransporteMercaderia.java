@@ -28,6 +28,14 @@ public class TransporteMercaderia extends Transporte  {
     public boolean isEsPeligroso() {
         return esPeligroso;
     }
+    
+    @Override
+    public void cargarDatos(int val){
+        super.cargarDatos(val);
+        cargarToneladas();
+        cargarEsPeligroso();
+        this.extra=calcularExtra();
+    }
 
     public void setToneladas(double toneladas) {
         if (toneladas < 0) {
