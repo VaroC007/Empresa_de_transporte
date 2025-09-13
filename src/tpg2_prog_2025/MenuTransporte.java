@@ -22,14 +22,14 @@ public class MenuTransporte {
     
     MenuTransporte(){
         try{
-            setArchiTransp(new Archivo("Transporte.dat", new Transporte()));
+            setArchiTransp(new Archivo("Transporte.dat", new TransporteMercaderia()));
         } catch(ClassNotFoundException e){
             Consola.emitirMensajeLN("Error al crear los descriptores de archivos: " + e.getMessage());
             System.exit(1);
         }
         setReg(new Registro());
-        setTransporte(new Transporte);
-        getReg().setEstado(getTransporte());
+        setTransporte(new TransporteMercaderia());
+        getReg().setEstado(getTransporteMercaderia());
     }
     
     
@@ -38,30 +38,44 @@ public class MenuTransporte {
         Consola.emitirMensajeLN("1. Alta de transporte");
         Consola.emitirMensajeLN("2. Baja de transporte");
         Consola.emitirMensajeLN("3. Modificacion de transporte");
+        Consola.emitirMensajeLN("0. Salir");
         Consola.emitirMensaje("Elija una opcion: ");
     }
     
-    
+    public static void crearArchivoTransporte(){
+        try{
+            setArchiTransp(new Archivo("C:\\Users\\alvar\\OneDrive\\Escritorio\\2025 PROGRAMACION III\\PROGIII_TPE1\\Transporte.dat", new TransporteMercaderia()));
+        }catch(ClassNotFoundException e){
+            Consola.emitirMensajeLN("Error al crear los descriptores de archivos: " + e.getMessage());
+            System.exit(1);
+        }
+    }
     public static void actualizacionTransporte(){
         
-        int op = -1;
-        while (op != 1 || op != 2 || op != 3) {
-            mostrarMenuTransporte();
-            op = Consola.leerInt();
-            switch (op) {
-                case 1:
-                    Consola.emitirMensaje("Ingrese los datos del transporte: ");
-                    cargaTransporte();
-                    break;
-                case 2:
-                    //bajaTransporte();
-                    break;
-                case 3:
-                    //modificacionTransporte();
-                    break;
-            }
+        int op ;
+        MenuTransporte mT = new MenuTransporte();
+        getArchiTransp().abrirParaLeerEscribir();
+        long cuanto = getArchiTransp().cantidadRegistros();
+        getArchiTransp().cerrarArchivo();
+        if (cuanto == 0) {
+            do {
+                mostrarMenuTransporte();
+                op = Consola.leerInt();
+                switch (op) {
+                    case 1:
+                        Consola.emitirMensaje("Ingrese los datos del transporte: ");
+                        cargaTransporte();
+                        break;
+                    case 2:
+                        bajaDeTransporte();
+                        break;
+                    case 3:
+                        modificarTransporte();
+                        break;
+                }
+            } while (op != 0);
+        
         }
-
        
     }
     
@@ -97,7 +111,7 @@ public class MenuTransporte {
                 do {
                     Consola.emitirMensajeLN("DNI del conductor: ");
                     dni = Consola.leerInt();
-                    if (!existeDni(dni)) {
+                    if (existeDni(dni) != null) {
                         Consola.emitirMensajeLN("Dni no existente.");
                         dni = -1; //  Invalidar dni si ya existe el conductor, 
                         //  para que vuelva a pedir otro dni 
@@ -114,8 +128,8 @@ public class MenuTransporte {
                         //  para que vuelva a pedir otro cod 
                     }
                 } while (cod < 0 || cod > 100);
-                TransportePersona tP = new TransportePersona();
-                tP.setDni(dni);
+                TransportePersonas tP = new TransportePersonas();
+                tP.setDniConductor(dni);
                 tP.setCodT(cod);
                 tP.cargarDatos();
                 aux = new Registro(tP, tp.getNroOrden());
@@ -125,7 +139,7 @@ public class MenuTransporte {
                 do {
                     Consola.emitirMensajeLN("DNI del conductor: ");
                     dni = Consola.leerInt();
-                    if (!existeDni(dni)) {
+                    if (existeDni(dni) != null) {
                         Consola.emitirMensajeLN("Dni no existente.");
                         dni = -1; //  Invalidar dni si ya existe el conductor, 
                         //  para que vuelva a pedir otro dni 
@@ -142,7 +156,7 @@ public class MenuTransporte {
                 } while (cod < 0 || cod > 100);
 
                 TransporteMercaderia tM = new TransporteMercaderia();
-                tM.setDni(dni);
+                tM.setDniConductor(dni);
                 tM.setCodT(cod);
                 tM.cargarDatos();
                 aux = new Registro(tM, tM.getNroOrden());
@@ -154,7 +168,7 @@ public class MenuTransporte {
     }
     
     //baja logica de los transporte
-    private void bajaDeTransporte() {
+    private static void bajaDeTransporte() {
         
         int op = -1;
         while (op != 2) {
@@ -187,12 +201,12 @@ public class MenuTransporte {
     private static Registro obtenerTransporte(int cod) {
         archiTransp.abrirParaLectura();
         while (!archiTransp.eof()) {                                 //mientras no llegue al final del archivo
-            Registro reg = archiTransp.leerRegistro();               //paso los metadatos del registro a una referencia del mismo tipo
-            if (reg.getEstado()) {
-                Transporte t = (Transporte) reg.getDatos();     //si esta activa paso los datos del objeto que tiene registro a una referencia Transprote
+            Registro aux = archiTransp.leerRegistro();               //paso los metadatos del registro a una referencia del mismo tipo
+            if (aux.getEstado()) {
+                Transporte t = (Transporte) aux.getDatos();     //si esta activa paso los datos del objeto que tiene registro a una referencia Transprote
                 if (t.getCodT() == cod) {                       //pregunto por la igual de codigos
                     archiTransp.cerrarArchivo();
-                    return reg;
+                    return aux;
                 }
             }
         }
@@ -208,17 +222,17 @@ public class MenuTransporte {
             int cod = Consola.leerInt();
             Registro aux = obtenerTransporte(cod);
             if (aux != null) {
-                Transporte auxT = aux.getDatos();
+                Transporte auxT = (Transporte) aux.getDatos();
                 
                 auxT.mostrarDatos();
                 
-                if (auxT instanceof TransportePersona){
-                    TransportePersona t = (TransportePersona) aux;
+                if (auxT instanceof TransportePersonas){
+                    TransportePersonas t = (TransportePersonas) auxT;
                     Consola.emitirMensajeLN("Modificar transporte de personas: ");
                     t.cargarDatos();
                     reg.setDatos(t);
                 } else if (auxT instanceof TransporteMercaderia){
-                    TransporteMercaderia t = (TransporteMercaderia) aux;
+                    TransporteMercaderia t = (TransporteMercaderia) auxT;
                     Consola.emitirMensajeLN("Modificar transporte de mercaderia: ");
                     t.cargarDatos();
                     reg.setDatos(t);

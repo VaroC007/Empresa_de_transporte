@@ -14,7 +14,7 @@ import tpg2_prog_2025.Consola;
  * @author alvar
  */
 public class Conductor implements Grabable {
-
+   
     private long dni;
     private String Ape_Nom;
 
