@@ -22,7 +22,7 @@ public class TransportePersonas extends Transporte {
     public int getPersonas() {
         return personas;
     }
-    
+
     private void setPersonas(int personas) {
         if (personas < 0) {
             throw new IllegalArgumentException("La cantidad de personas no puede ser negativa.");
@@ -38,27 +38,42 @@ public class TransportePersonas extends Transporte {
         } while (p <= 0);
         this.personas = p;
     }
-    
+
     @Override
-    public void cargarDatos(int val){
+    public void cargarDatos(int val) {
         super.cargarDatos(val);
         cargarPersonas();
-        this.extra=calcularExtra();
+        this.extra = calcularExtra();
     }
-    
+
     @Override
-    public double calcularExtra(){
-        if(personas>9){
-            return 5500*this.horas;
-        }else{
-            return 3000*this.horas;
+    public double calcularExtra() {
+        if (personas > 9) {
+            return 5500 * this.horas;
+        } else {
+            return 3000 * this.horas;
         }
     }
-    
-    
+
     @Override
     public String toString() {
-        return super.toString() + ", Personas=" + personas + ", Extra calculado=$" + calcularExtra();
+        return super.toString() + String.format(" %d personas", personas);
+    }
+
+    @Override
+    public void mostrarRegistro(int val, boolean activo) {
+        if (!activo) {
+            return;
+        }
+
+        switch (val) {
+            case 0:
+                super.mostrarRegistro(0, true);
+                break;
+            case 1:
+                Consola.emitirMensaje(toString());
+                break;
+        }
     }
 
 }

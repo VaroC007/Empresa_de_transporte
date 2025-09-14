@@ -4,20 +4,23 @@
  * and open the template in the editor.
  */
 package tpg2_prog_2025;
+
 import datos.*;
 import persistencia.*;
 import static tpg2_prog_2025.MenuTransporte.getArchiTransp;
+
 /**
  *
  * @author alvar
  */
 public class GestorEmpresa {
+
     private static Archivo archiConduc;
     private static Conductor conductor;
     private static Registro reg;
     private static int sueldo = 400000;
     private static final int LONG = 16;
-    
+
     public static void showOptions() {
         Consola.emitirMensajeLN(Emisor.titulo("Empresa Transporte", LONG * 3, LONG));
         Consola.emitirMensajeLN("1. Cargar conductor");
@@ -26,7 +29,7 @@ public class GestorEmpresa {
         Consola.emitirMensajeLN("4. Listado de transporte por conductor");
         Consola.emitirMensajeLN("0. Salir");
     }
-    
+
     public static void menu() {
         /*try {
             cond = new Archivo("CONDUCTORES.dat", new Conductores());
@@ -49,12 +52,12 @@ public class GestorEmpresa {
                     MenuTransporte.actualizacionTransporte();
                     break;
                 case 3:
-           //         listadoDeSueldo();
+                    //         listadoDeSueldo();
                     break;
                 case 4:
                     listarTransporteXConductor();
                     break;
-                
+
             }
         } while (op != 0);
     }
@@ -72,7 +75,7 @@ public class GestorEmpresa {
         }
         archiConduc.cerrarArchivo();
     }
-    
+
     private static Registro leerDatosCond() {
         Conductor datos = new Conductor();
         long dni;
@@ -84,21 +87,22 @@ public class GestorEmpresa {
                 dni = -1; //  Invalidar codigo si ya existe el conductor, 
                 //  para que vuelva a pedir otro dni 
             }
-        } while (dni < 0 );
+        } while (dni < 0);
         datos.setDni(dni);
-        datos.cargarDatos();
-        Registro aux = new Registro(datos, (int)datos.getNroOrden()); // Aqui es donde se indica que la clave principal es "dni"
+        datos.cargarDatos(1);
+        Registro aux = new Registro(datos, (int) datos.getDni()); // Aqui es donde se indica que la clave principal es "dni"
         return aux;
     }
+
     //metodo que va a buscar los registros del conductor en el archivo de conductores para luego comparar dni
-    public static Registro existeDni(long dni){
+    public static Registro existeDni(long dni) {
         archiConduc.abrirParaLectura();
-        archiConduc.irPrincipioArchivo();                   
-        while (!archiConduc.eof()){                                //me posicion al principio del archivo
+        archiConduc.irPrincipioArchivo();
+        while (!archiConduc.eof()) {                                //me posicion al principio del archivo
             Registro aux = archiConduc.leerRegistro();             //referencia reg para tener los datos del registro
-            if (aux.getEstado()){                           //si esta activo realizo un casting y pregunto por dni
+            if (aux.getEstado()) {                           //si esta activo realizo un casting y pregunto por dni
                 Conductor c = (Conductor) aux.getDatos();
-                if (c.getDni() == dni){
+                if (c.getDni() == dni) {
                     archiConduc.cerrarArchivo();
                     return aux;
                 }
@@ -107,36 +111,29 @@ public class GestorEmpresa {
         archiConduc.cerrarArchivo();
         return null;
     }
-    
-    
-    
-    public static void listarTransporteXConductor(){
+
+    public static void listarTransporteXConductor() {
         Archivo auxA = getArchiTransp();
-        
+
         auxA.abrirParaLectura();
-        
+
         auxA.irPrincipioArchivo();
-        
-        while(!auxA.eof() ){
+        Consola.emitirMensajeLN("LISTADO TRANSPORTE POR CONDUCTOR");
+        Consola.emitirMensajeLN(String.format("%-10s %-15s %-12s %-25s %-12s %-20s", "Cod.T", "Tipo", "Extra", "Detalle", "DNI", "Conductor"));
+        while (!auxA.eof()) {
             Registro auxR = auxA.leerRegistro();
-            
-            if(auxR.getEstado()){                   //estado del registro (si esta activo)
+
+            if (auxR.getEstado()) {                   //estado del registro (si esta activo)
                 Transporte auxT = (Transporte) auxR.getDatos();    //casting para luego comparar DNI con conductor
                 Registro regC = existeDni(auxT.getDniConductor());  //paso el DNI del Transporte para buscar en archivos conducotres
-                if(regC != null){
+                if (regC != null) {
                     Conductor auxC = (Conductor) regC.getDatos();
-                    auxT.mostrarRegistro();                         //muestro los datos del Transporte
-                    auxC.mostrarRegistro();                         //muestro los datos del Conductor
+                    auxT.mostrarRegistro(1,true);                         //muestro los datos del Transporte
+                    auxC.mostrarRegistro(1,true); //muestro los datos del Conductor
+                    Consola.emitirMensajeLN("");
                 }
-                
             }
-            
         }
-        
     }
-    
-    
-    
-    
-    
+
 }

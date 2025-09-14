@@ -102,35 +102,32 @@ public class Conductor implements Grabable {
                 this.dni = a.readLong();
             }
             this.Ape_Nom = Registro.leerString(a, 20).trim();
-        }catch(IOException e){
-            Consola.emitirMensajeLN("Error al leer el registro: "+e.getMessage());
+        } catch (IOException e) {
+            Consola.emitirMensajeLN("Error al leer el registro: " + e.getMessage());
         }
     }
 
     @Override
     public void mostrarRegistro(int val, boolean activo) {
-        if(!activo){
+        if (!activo) {
             return;
         }
-        switch(val){
+        switch (val) {
             case 0:
-                Consola.emitirMensajeLN("Dni          Nombre conductor");
+                Consola.emitirMensaje(String.format("%-12s %-20s", "DNI", "Conductor"));
                 break;
             case 1:
-                Consola.emitirMensajeLN(toString());
+                Consola.emitirMensaje(toString());
                 break;
             case 2:
-                Consola.emitirMensajeLN("Consductor: "+this.Ape_Nom);
+                Consola.emitirMensajeLN("Consductor: " + this.Ape_Nom);
                 break;
         }
     }
 
     @Override
     public String toString() {
-        return "Conductor {"
-                + ", DNI=" + dni
-                + ", Nombre=" + Ape_Nom
-                + '}';
+        return String.format("%-12d %-20s", dni, Ape_Nom);
     }
 
 }

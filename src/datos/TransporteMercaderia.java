@@ -10,7 +10,7 @@ import tpg2_prog_2025.Consola;
  *
  * @author Julian Novoa
  */
-public class TransporteMercaderia extends Transporte  {
+public class TransporteMercaderia extends Transporte {
 
     private double toneladas;
     private boolean esPeligroso;
@@ -28,13 +28,13 @@ public class TransporteMercaderia extends Transporte  {
     public boolean isEsPeligroso() {
         return esPeligroso;
     }
-    
+
     @Override
-    public void cargarDatos(int val){
+    public void cargarDatos(int val) {
         super.cargarDatos(val);
         cargarToneladas();
         cargarEsPeligroso();
-        this.extra=calcularExtra();
+        this.extra = calcularExtra();
     }
 
     public void setToneladas(double toneladas) {
@@ -78,7 +78,24 @@ public class TransporteMercaderia extends Transporte  {
 
     @Override
     public String toString() {
-        return super.toString() + ", Toneladas=" + toneladas + ", Peligroso=" + esPeligroso
-                + ", Extra calculado=$" + calcularExtra();
+        String peligro = esPeligroso ? " - Peligroso" : "";
+        return super.toString() + String.format(" %d toneladas%s", toneladas, peligro);
     }
+
+    @Override
+    public void mostrarRegistro(int val, boolean activo) {
+        if (!activo) {
+            return;
+        }
+
+        switch (val) {
+            case 0:
+                super.mostrarRegistro(0, true);
+                break;
+            case 1:
+                Consola.emitirMensaje(toString());
+                break;
+        }
+    }
+
 }

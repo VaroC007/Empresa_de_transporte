@@ -52,8 +52,6 @@ public abstract class Transporte implements Grabable, ICalculable {
         return extra;
     }
 
-    
-    
     @Override
     public int tamRegistro() {
         return TAMREG;
@@ -172,10 +170,10 @@ public abstract class Transporte implements Grabable, ICalculable {
 
         switch (val) {
             case 0:
-                Consola.emitirMensajeLN("Cod.T        Tipo        Horas        Dni cond.        Extra");
+                Consola.emitirMensaje("Cod.T        Tipo        Extra        Detalle");
                 break;
             case 1:
-                Consola.emitirMensajeLN(toString());
+                Consola.emitirMensaje(toString());
                 break;
             case 2:
                 String tipoSimple = (tipo == 'P' || tipo == 'p') ? "Personas" : "Mercaderias";
@@ -187,13 +185,7 @@ public abstract class Transporte implements Grabable, ICalculable {
     @Override
     public String toString() {
         String tipoStr = (tipo == 'P' || tipo == 'p') ? "Personas" : "Mercaderias";
+        return String.format("%-10d %-15s $%-12.2f", codT, tipoStr, extra);
 
-        return "Transporte {"
-                + "Codigo=" + codT
-                + ", Tipo=" + tipoStr
-                + ", Horas=" + horas
-                + ", DNI Conductor=" + dniConductor
-                + ", Extra=$" + extra
-                + '}';
     }
 }
