@@ -5,6 +5,9 @@
  */
 package tpg2_prog_2025;
 
+import datos.*;
+import persistencia.*;
+
 /**
  *
  * @author alvar
@@ -15,7 +18,8 @@ public class TPG2_PROG_2025 {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        
     }
+        
     
 }

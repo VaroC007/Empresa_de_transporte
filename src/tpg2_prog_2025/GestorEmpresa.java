@@ -90,7 +90,7 @@ public class GestorEmpresa {
         } while (dni < 0);
         
        
-        ///
+        setConductor(new Conductor());
         getConductor().agregarDni(dni);
         Registro aux = new Registro(getConductor(),(int) getConductor().getDni()); // Aqui es donde se indica que la clave principal es "dni"
         aux.setEstado(true);
