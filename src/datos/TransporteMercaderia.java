@@ -97,6 +97,10 @@ public class TransporteMercaderia extends Transporte {
                 break;
         }
     }
-    
-    
+
+    @Override
+    public int tamRegistro() {
+        return super.tamRegistro();
+    }
+
 }

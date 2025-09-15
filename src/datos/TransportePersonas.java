@@ -75,5 +75,10 @@ public class TransportePersonas extends Transporte {
                 break;
         }
     }
+    
+    @Override
+    public int tamRegistro(){
+        return super.tamRegistro();
+    }
 
 }
