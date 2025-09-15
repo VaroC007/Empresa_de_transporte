@@ -77,7 +77,7 @@ public abstract class Transporte implements Grabable, ICalculable {
         cargarHoras();
         cargarDniConductor();
     }*/
-    private void cargarCodT() {
+    public void cargarCodT() {
         int c;
         do {
             Consola.emitirMensaje("Codigo de transporte: ");

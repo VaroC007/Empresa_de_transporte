@@ -28,8 +28,8 @@ public class MenuTransporte {
             System.exit(1);
         }
         setReg(new Registro());
-        setTransporte(new TransporteMercaderia());
-        getReg().setEstado(getTransporteMercaderia());
+        setTransporte(new TransporteMercaderia());              //utilizamos la clase con mayor bytes tiene para que los bytes no se "pisen" en el archivo
+        getReg().setDatos(getTransporte());
     }
     
     
@@ -103,7 +103,7 @@ public class MenuTransporte {
         
         
         Registro aux = null;
-        getTransporte().cargarDatos(0);
+        
         switch (t) {
 
             case 1:
@@ -132,7 +132,9 @@ public class MenuTransporte {
                 /////
                 getTransporte().agregarCod(cod);
                 getTransporte().agregarDni(dni);
+                getTransporte().cargarDatos(0);
                 aux = new Registro(getTransporte(), getTransporte().getCodT());
+                aux.setEstado(true);
                 
                 break;
             case 2:
@@ -160,6 +162,7 @@ public class MenuTransporte {
                 /////
                 getTransporte().agregarCod(cod);
                 getTransporte().agregarDni(dni);
+                getTransporte().cargarDatos(1);
                 aux = new Registro(getTransporte(), getTransporte().getCodT());
                 break;
         }
@@ -174,25 +177,12 @@ public class MenuTransporte {
         int op = -1;
         while (op != 2) {
             Consola.emitirMensaje("Ingrese el codigo de transporte: ");
-            int cod = Consola.leerInt();        
             
-            Registro aux = obtenerTransporte(cod);
-            if(aux != null){
-                Transporte t = (Transporte) aux.getDatos();
-                t.mostrarRegistro(2, true);
-                Consola.emitirMensaje("¿Confirmar la baja? 1. Aceptar ** 2. Cancelar");
-                int conf = Consola.leerInt();
-                if(conf == 1){
-                    if(archiTransp.bajaRegistro(aux)){
-                        Consola.emitirMensajeLN("Baja exitosa");
-                    } 
-                } else {
-                    Consola.emitirMensajeLN("Baja cancelada");
-                }
-            } else {
-                Consola.emitirMensajeLN("No existe transporte con ese codigo");
-            }
-            
+            ////
+            getTransporte().cargarCodT();                               //carga del codigo 
+            getReg().cargarNroOrden(getTransporte().getCodT());         //se genera el numero de orden a partir de codigo
+            getArchiTransp().bajaRegistro(getReg());                    //busqueda interna y baja del registro (false)
+            ////
             Consola.emitirMensajeLN("Desea dar de baja otro Transporte? 1.SI 2.NO");
             op = Consola.leerInt();
         }
@@ -220,34 +210,13 @@ public class MenuTransporte {
         int op = -1;
         while (op != 0){
             Consola.emitirMensaje("Codigo de transporte a modificar: ");
-            int cod = Consola.leerInt();
-            Registro aux = obtenerTransporte(cod);
-            if (aux != null) {
-                Transporte auxT = (Transporte) aux.getDatos();
-                
-                auxT.mostrarRegistro(2, true);
-                
-                if (auxT instanceof TransportePersonas){
-                    TransportePersonas t = (TransportePersonas) auxT;
-                    Consola.emitirMensajeLN("Modificar transporte de personas: ");
-                    t.cargarDatos(1);
-                    reg.setDatos(t);
-                } else if (auxT instanceof TransporteMercaderia){
-                    TransporteMercaderia t = (TransporteMercaderia) auxT;
-                    Consola.emitirMensajeLN("Modificar transporte de mercaderia: ");
-                    t.cargarDatos(1);
-                    reg.setDatos(t);
-                }
-                
-                archiTransp.abrirParaLeerEscribir();
-                archiTransp.grabarRegistro(reg);
-                archiTransp.cerrarArchivo();
-                Consola.emitirMensajeLN("Modificaciones Hechas !!");
-            } else {
-                Consola.emitirMensajeLN("No existe transporte con ese codigo");
-            }
-
-
+            
+            ////
+            getTransporte().cargarCodT();
+            getReg().cargarNroOrden(getTransporte().getCodT());
+            
+            getArchiTransp().modificarRegistro(getReg());
+            
             Consola.emitirMensajeLN("Desea modificar otro Transporte? 1.SI 2.NO");
             op = Consola.leerInt();
         }

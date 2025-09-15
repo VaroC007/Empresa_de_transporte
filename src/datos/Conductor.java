@@ -132,5 +132,10 @@ public class Conductor implements Grabable {
     public String toString() {
         return String.format("%-12d %-20s", dni, Ape_Nom);
     }
+    
+    ///METODO PARA SETTEAR DNI. UTILIZADO EN LA CARGA. MANTIENE ENCAPSULAMIENTO///
+    public void agregarDNI(long x){
+        setDni(x);
+    }
 
 }

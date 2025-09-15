@@ -77,7 +77,7 @@ public class GestorEmpresa {
     }
 
     private static Registro leerDatosCond() {
-        Conductor datos = new Conductor();
+       
         long dni;
         do {
             Consola.emitirMensajeLN("DNI del conductor: ");
@@ -88,11 +88,12 @@ public class GestorEmpresa {
                 //  para que vuelva a pedir otro dni 
             }
         } while (dni < 0);
-        datos.setDni(dni);
-        datos.cargarDatos(1);
+        
+       
         ///
         getConductor().agregarDni(dni);
         Registro aux = new Registro(getConductor(),(int) getConductor().getDni()); // Aqui es donde se indica que la clave principal es "dni"
+        aux.setEstado(true);
         return aux;
     }
 
@@ -113,7 +114,33 @@ public class GestorEmpresa {
         archiConduc.cerrarArchivo();
         return null;
     }
-
+    /*Recorrer CONDUCTORES.DAT y para cada conductor activo, sumar:
+ Sueldo fijo
+ $7.500 × total horas de todos sus transportes activos
+ Total de montos extras
+    Mostrar: DNI, apellido y nombre, sueldo final.
+*/
+    public static void listadoDeSueldos(){
+        getArchiConduc().abrirParaLectura();
+        Archivo auxA = getArchiTransp();
+        while(!getArchiConduc().eof()){
+            Registro auxR = getArchiConduc().leerRegistro();    //obtengo el registro en una posicion
+            if(auxR.getEstado()){
+                Conductor auxC = (Conductor) auxR.getDatos();
+                auxA.abrirParaLectura();
+                while(!auxA.eof()){
+                    Registro auxT = auxA.leerRegistro();
+                    
+                }
+                
+                
+            }
+            
+        }
+    }
+    
+    
+    
     public static void listarTransporteXConductor() {
         Archivo auxA = getArchiTransp();
 
