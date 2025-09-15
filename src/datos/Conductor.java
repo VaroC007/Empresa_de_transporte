@@ -41,6 +41,9 @@ public class Conductor implements Grabable {
         }
         this.dni = dni;
     }
+    public void agregarDni(long x){
+        setDni(x);
+    }
 
     public void setApe_Nom(String Ape_Nom) {
         if (Ape_Nom.trim().isEmpty()) {

@@ -84,7 +84,7 @@ public class MenuTransporte {
         try {
             do {
                 reg = leerDatosTransp();
-                archiTransp.cargarUnRegistro(reg);
+                archiTransp.cargarUnRegistro(getReg());
             } while (Consola.confirmar());
         } catch (Exception e) {
             Consola.emitirMensajeLN("Error al cargar el archivo: " + e.getMessage());
@@ -116,7 +116,7 @@ public class MenuTransporte {
                         dni = -1; //  Invalidar dni si ya existe el conductor, 
                         //  para que vuelva a pedir otro dni 
                     }
-                } while (dni < 0);
+                } while (dni < 0 && dni > 100);
                 int cod;
               
                 do {
@@ -128,11 +128,12 @@ public class MenuTransporte {
                         //  para que vuelva a pedir otro cod 
                     }
                 } while (cod < 0 || cod > 100);
-                TransportePersonas tP = new TransportePersonas();
-                tP.setDniConductor(dni);
-                tP.setCodT(cod);
-                tP.cargarDatos();
-                aux = new Registro(tP, tp.getNroOrden());
+              
+                /////
+                getTransporte().agregarCod(cod);
+                getTransporte().agregarDni(dni);
+                aux = new Registro(getTransporte(), getTransporte().getCodT());
+                
                 break;
             case 2:
 
@@ -144,7 +145,7 @@ public class MenuTransporte {
                         dni = -1; //  Invalidar dni si ya existe el conductor, 
                         //  para que vuelva a pedir otro dni 
                     }
-                } while (dni < 0 );
+                } while (dni < 0 && dni > 100);
                 do {
                     Consola.emitirMensajeLN("Codigo del transporte: ");
                     cod = Consola.leerInt();
@@ -155,11 +156,11 @@ public class MenuTransporte {
                     }
                 } while (cod < 0 || cod > 100);
 
-                TransporteMercaderia tM = new TransporteMercaderia();
-                tM.setDniConductor(dni);
-                tM.setCodT(cod);
-                tM.cargarDatos();
-                aux = new Registro(tM, tM.getNroOrden());
+              
+                /////
+                getTransporte().agregarCod(cod);
+                getTransporte().agregarDni(dni);
+                aux = new Registro(getTransporte(), getTransporte().getCodT());
                 break;
         }
 
@@ -178,7 +179,7 @@ public class MenuTransporte {
             Registro aux = obtenerTransporte(cod);
             if(aux != null){
                 Transporte t = (Transporte) aux.getDatos();
-                t.mostrarRegistro();
+                t.mostrarRegistro(2, true);
                 Consola.emitirMensaje("¿Confirmar la baja? 1. Aceptar ** 2. Cancelar");
                 int conf = Consola.leerInt();
                 if(conf == 1){
@@ -224,17 +225,17 @@ public class MenuTransporte {
             if (aux != null) {
                 Transporte auxT = (Transporte) aux.getDatos();
                 
-                auxT.mostrarDatos();
+                auxT.mostrarRegistro(2, true);
                 
                 if (auxT instanceof TransportePersonas){
                     TransportePersonas t = (TransportePersonas) auxT;
                     Consola.emitirMensajeLN("Modificar transporte de personas: ");
-                    t.cargarDatos();
+                    t.cargarDatos(1);
                     reg.setDatos(t);
                 } else if (auxT instanceof TransporteMercaderia){
                     TransporteMercaderia t = (TransporteMercaderia) auxT;
                     Consola.emitirMensajeLN("Modificar transporte de mercaderia: ");
-                    t.cargarDatos();
+                    t.cargarDatos(1);
                     reg.setDatos(t);
                 }
                 

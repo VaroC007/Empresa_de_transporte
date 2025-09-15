@@ -86,7 +86,10 @@ public abstract class Transporte implements Grabable, ICalculable {
         } while (c < 0 && c > 100);
         this.codT = c;
     }
-
+    /*METODO PARA SETTEAR CODIGO, UTILIZADO EN LAS CARGAS. MANTIENE EL ENCAPSULAMIENTO*/
+    public void agregarCod(int cod){
+        codT = cod;
+    }
     private void cargarTipo() {
         char t;
         do {
@@ -113,6 +116,12 @@ public abstract class Transporte implements Grabable, ICalculable {
         } while (dc <= 0);
         this.dniConductor = dc;
     }
+    /**METODO PARA SETTEAR DNI, UTILIZADO PARA LAS CARGAS MANTIENE EL ENCAPSULAMIENTO
+     * @param dni**********************************/
+    public void agregarDni(long dni){
+        dniConductor = dni;
+    }
+    //
 
     /*private void cargarExtra() {
         double e;
@@ -188,4 +197,6 @@ public abstract class Transporte implements Grabable, ICalculable {
         return String.format("%-10d %-15s $%-12.2f", codT, tipoStr, extra);
 
     }
+    
+    
 }

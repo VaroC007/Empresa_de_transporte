@@ -67,7 +67,7 @@ public class GestorEmpresa {
         try {
             do {
                 reg = leerDatosCond();
-                archiConduc.cargarUnRegistro(reg);
+                archiConduc.cargarUnRegistro(getReg());
             } while (Consola.confirmar());
         } catch (Exception e) {
             Consola.emitirMensajeLN("Error al cargar el archivo: " + e.getMessage());
@@ -90,7 +90,9 @@ public class GestorEmpresa {
         } while (dni < 0);
         datos.setDni(dni);
         datos.cargarDatos(1);
-        Registro aux = new Registro(datos, (int) datos.getDni()); // Aqui es donde se indica que la clave principal es "dni"
+        ///
+        getConductor().agregarDni(dni);
+        Registro aux = new Registro(getConductor(),(int) getConductor().getDni()); // Aqui es donde se indica que la clave principal es "dni"
         return aux;
     }
 
@@ -135,5 +137,31 @@ public class GestorEmpresa {
             }
         }
     }
+
+    public static Archivo getArchiConduc() {
+        return archiConduc;
+    }
+
+    public static Conductor getConductor() {
+        return conductor;
+    }
+
+    public static Registro getReg() {
+        return reg;
+    }
+
+    public static void setArchiConduc(Archivo archiConduc) {
+        GestorEmpresa.archiConduc = archiConduc;
+    }
+
+    public static void setConductor(Conductor conductor) {
+        GestorEmpresa.conductor = conductor;
+    }
+
+    public static void setReg(Registro reg) {
+        GestorEmpresa.reg = reg;
+    }
+    /********************GETTERS Y SETTERS****************************/
+    
 
 }
