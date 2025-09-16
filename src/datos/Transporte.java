@@ -22,7 +22,7 @@ public abstract class Transporte implements Grabable, ICalculable {
     protected double extra;  //monto calculado
 
     private static int TAMARCHIVO = 100;
-    private static int TAMREG = 36; //bytes
+    private static int TAMREG = 26; //bytes
 
     public Transporte() {
         this.codT = 0;
@@ -69,7 +69,7 @@ public abstract class Transporte implements Grabable, ICalculable {
         }
         cargarTipo();
         cargarHoras();
-        cargarDniConductor();
+       // cargarDniConductor();
     }
 
     /*public void cargarDatosSinClave() {

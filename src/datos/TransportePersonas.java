@@ -13,10 +13,19 @@ import tpg2_prog_2025.Consola;
 public class TransportePersonas extends Transporte {
 
     private int personas;
-
+    private int primitivoVacio;
+    private char charvacio;
+    private char char2vacio;
+    
+    private static int TAMAREG = 35;
+    private static int TAMARCHIVO = 100;
+    
     public TransportePersonas() {
         super();
         this.personas = 0;
+        primitivoVacio = 0;
+        charvacio = 0;
+        char2vacio = 0;
     }
 
     public int getPersonas() {

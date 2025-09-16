@@ -64,7 +64,7 @@ public class MenuTransporte {
                 op = Consola.leerInt();
                 switch (op) {
                     case 1:
-                        Consola.emitirMensaje("Ingrese los datos del transporte: ");
+                        Consola.emitirMensajeLN("-- Ingrese los datos del transporte --");
                         cargaTransporte();
                         break;
                     case 2:
@@ -94,8 +94,7 @@ public class MenuTransporte {
         archiTransp.cerrarArchivo();
     }
     
-    //consulta sobre el dni del conductor y luego sobre el codigo del transporte hasta que ambos ingresos 
-    //sean correctos (que no existan) para poder continuar con la carga de los demas datos
+ 
     private static Registro leerDatosTransp() {
         Consola.emitirMensajeLN("1. Transporte para personas");
         Consola.emitirMensajeLN("2. Transporte de mercaderia");
@@ -112,7 +111,7 @@ public class MenuTransporte {
                 do {
                     Consola.emitirMensajeLN("DNI del conductor: ");
                     dni = Consola.leerInt();
-                    if (existeDni(dni) != null) {
+                    if (existeDni(dni) == null) {
                         Consola.emitirMensajeLN("Dni no existente.");
                         dni = -1; //  Invalidar dni si ya existe el conductor, 
                         //  para que vuelva a pedir otro dni 
@@ -133,17 +132,19 @@ public class MenuTransporte {
                 /////
                 getTransporte().agregarCod(cod);
                 getTransporte().agregarDni(dni);
-                getTransporte().cargarDatos(0);
-                aux = new Registro(getTransporte(), getTransporte().getCodT());
+                TransportePersonas auxTP = (TransportePersonas) getTransporte();
+                auxTP.cargarDatos(1);
+
+                aux = new Registro(auxTP, auxTP.getCodT());
                 aux.setEstado(true);
                 
                 break;
             case 2:
-
+                 
                 do {
                     Consola.emitirMensajeLN("DNI del conductor: ");
                     dni = Consola.leerInt();
-                    if (existeDni(dni) != null) {
+                    if (existeDni(dni) == null) {
                         Consola.emitirMensajeLN("Dni no existente.");
                         dni = -1; //  Invalidar dni si ya existe el conductor, 
                         //  para que vuelva a pedir otro dni 
@@ -163,8 +164,9 @@ public class MenuTransporte {
                 /////
                 getTransporte().agregarCod(cod);
                 getTransporte().agregarDni(dni);
-                getTransporte().cargarDatos(1);
-                aux = new Registro(getTransporte(), getTransporte().getCodT());
+                TransporteMercaderia auxTM = (TransporteMercaderia) getTransporte();
+                auxTM.cargarDatos(1);
+                aux = new Registro(auxTM, auxTM.getCodT());
                 break;
         }
 
@@ -192,14 +194,25 @@ public class MenuTransporte {
     //metodo que me va a devolver un registro con un transporte dentro
     private static Registro obtenerTransporte(int cod) {
         archiTransp.abrirParaLectura();
+        archiTransp.irPrincipioArchivo();
         while (!archiTransp.eof()) {                                 //mientras no llegue al final del archivo
             Registro aux = archiTransp.leerRegistro();               //paso los metadatos del registro a una referencia del mismo tipo
             if (aux.getEstado()) {
                 Transporte t = (Transporte) aux.getDatos();     //si esta activa paso los datos del objeto que tiene registro a una referencia Transprote
-                if (t.getCodT() == cod) {                       //pregunto por la igual de codigos
-                    archiTransp.cerrarArchivo();
-                    return aux;
+                if (t instanceof TransporteMercaderia) {
+                    TransporteMercaderia auxtm = (TransporteMercaderia) t;
+                    if (auxtm.getCodT() == cod) {
+                        archiTransp.cerrarArchivo();
+                        return aux;
+                    }
+                } else if (t instanceof TransportePersonas) {
+                    TransportePersonas auxtp = (TransportePersonas) t;
+                    if (auxtp.getCodT() == cod) {
+                        archiTransp.cerrarArchivo();
+                        return aux;
+                    }
                 }
+
             }
         }
         archiTransp.cerrarArchivo();

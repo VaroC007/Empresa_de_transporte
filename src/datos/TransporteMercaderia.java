@@ -14,6 +14,9 @@ public class TransporteMercaderia extends Transporte {
 
     private double toneladas;
     private boolean esPeligroso;
+    
+    private static int TAMAREG = 35;
+    private static int TAMARCHIVO = 100;
 
     public TransporteMercaderia() {
         super();
