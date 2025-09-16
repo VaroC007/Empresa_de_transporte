@@ -4,6 +4,8 @@
  */
 package datos;
 
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import tpg2_prog_2025.Consola;
 
 /**
@@ -39,7 +41,7 @@ public class TransporteMercaderia extends Transporte {
         cargarEsPeligroso();
         this.extra = calcularExtra();
     }
-
+    
     public void setToneladas(double toneladas) {
         if (toneladas < 0) {
             throw new IllegalArgumentException("Las toneladas no pueden ser negativas.");
@@ -104,6 +106,45 @@ public class TransporteMercaderia extends Transporte {
     @Override
     public int tamRegistro() {
         return super.tamRegistro();
+    }
+    
+    @Override
+    public void grabar(RandomAccessFile file) {
+        super.grabar(file);
+        try {
+            
+            file.writeBoolean(esPeligroso);
+            file.writeDouble(toneladas);
+        } catch (IOException e) {
+            Consola.emitirMensajeLN("Error al grabar transporte" + e.getMessage());
+            System.exit(1);
+        }
+    }
+    
+    @Override
+    public void leer(RandomAccessFile file, int val) {
+        super.leer(file, 0);
+        try {
+            if (val == 0) {
+                codT = file.readInt();
+            }
+            
+            esPeligroso = file.readBoolean();
+            toneladas = file.readDouble();
+        } catch (IOException e) {
+            Consola.emitirMensajeLN("error al leer el registro: " + e.getMessage());
+            System.exit(1);
+        }
+    }
+    
+    @Override
+    public void agregarCod(int i){
+        super.agregarCod(i);
+    }
+    
+    @Override
+    public void agregarDni(long dni){
+        super.agregarDni(dni);
     }
 
 }

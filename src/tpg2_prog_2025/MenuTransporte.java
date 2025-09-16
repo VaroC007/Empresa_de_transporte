@@ -100,7 +100,7 @@ public class MenuTransporte {
         Consola.emitirMensajeLN("2. Transporte de mercaderia");
         Consola.emitirMensaje("Elija una opcion: ");
         int t = Consola.leerInt();
-        
+        Transporte tt;
         
         Registro aux = null;
         
@@ -130,12 +130,13 @@ public class MenuTransporte {
                 } while (cod < 0 || cod > 100);
               
                 /////
-                getTransporte().agregarCod(cod);
-                getTransporte().agregarDni(dni);
-                TransportePersonas auxTP = (TransportePersonas) getTransporte();
-                auxTP.cargarDatos(1);
-
-                aux = new Registro(auxTP, auxTP.getCodT());
+                tt = new TransportePersonas();
+                tt.agregarCod(cod);
+                tt.agregarDni(dni);
+                tt.cargarDatos(1);
+                
+      
+                aux = new Registro(tt, tt.getCodT());
                 aux.setEstado(true);
                 
                 break;
@@ -160,13 +161,13 @@ public class MenuTransporte {
                     }
                 } while (cod < 0 || cod > 100);
 
-              
+                tt = new TransporteMercaderia();
+                tt.agregarCod(cod);
+                tt.agregarDni(dni);
+                tt.cargarDatos(1);
                 /////
-                getTransporte().agregarCod(cod);
-                getTransporte().agregarDni(dni);
-                TransporteMercaderia auxTM = (TransporteMercaderia) getTransporte();
-                auxTM.cargarDatos(1);
-                aux = new Registro(auxTM, auxTM.getCodT());
+          
+                aux = new Registro(tt, tt.getCodT());
                 break;
         }
 

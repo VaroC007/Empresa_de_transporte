@@ -4,6 +4,8 @@
  */
 package datos;
 
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import tpg2_prog_2025.Consola;
 
 /**
@@ -13,9 +15,7 @@ import tpg2_prog_2025.Consola;
 public class TransportePersonas extends Transporte {
 
     private int personas;
-    private int primitivoVacio;
-    private char charvacio;
-    private char char2vacio;
+    
     
     private static int TAMAREG = 35;
     private static int TAMARCHIVO = 100;
@@ -23,9 +23,7 @@ public class TransportePersonas extends Transporte {
     public TransportePersonas() {
         super();
         this.personas = 0;
-        primitivoVacio = 0;
-        charvacio = 0;
-        char2vacio = 0;
+        
     }
 
     public int getPersonas() {
@@ -88,6 +86,46 @@ public class TransportePersonas extends Transporte {
     @Override
     public int tamRegistro(){
         return super.tamRegistro();
+    }
+    
+    @Override
+    public void grabar(RandomAccessFile file) {
+        super.grabar(file);
+        try {
+            file.writeInt(personas);
+            file
+        } catch (IOException e) {
+            Consola.emitirMensajeLN("Error al grabar transporte personas" + e.getMessage());
+            System.exit(1);
+        }
+    }
+    
+    @Override
+    public void leer(RandomAccessFile file, int val) {
+        super.leer(file, val);
+        try {
+            if (val == 0) {
+                codT = file.readInt();
+            }
+            personas = file.readInt();
+            primitivoVacio = file.readInt();
+            charvacio = file.readChar();
+            char2vacio = file.readChar();
+
+        } catch (IOException e) {
+            Consola.emitirMensajeLN("error al leer el registro: " + e.getMessage());
+            System.exit(1);
+        }
+    }
+    
+    @Override
+    public void agregarCod(int i){
+        super.agregarCod(i);
+    }
+    
+    @Override
+    public void agregarDni(long dni){
+        super.agregarDni(dni);
     }
 
 }
