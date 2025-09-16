@@ -22,7 +22,7 @@ public class MenuTransporte {
     
     MenuTransporte(){
         try{
-            setArchiTransp(new Archivo("Transporte.dat", new TransporteMercaderia()));
+            setArchiTransp(new Archivo("TRANSPORTE.dat", new TransporteMercaderia()));
         } catch(ClassNotFoundException e){
             Consola.emitirMensajeLN("Error al crear los descriptores de archivos: " + e.getMessage());
             System.exit(1);
@@ -42,14 +42,14 @@ public class MenuTransporte {
         Consola.emitirMensaje("Elija una opcion: ");
     }
     
-    public static void crearArchivoTransporte(){
+  /*  public static void crearArchivoTransporte(){
         try{
             setArchiTransp(new Archivo("C:\\Users\\alvar\\OneDrive\\Escritorio\\2025 PROGRAMACION III\\PROGIII_TPE1\\Transporte.dat", new TransporteMercaderia()));
         }catch(ClassNotFoundException e){
             Consola.emitirMensajeLN("Error al crear los descriptores de archivos: " + e.getMessage());
             System.exit(1);
         }
-    }
+    }*/
     public static void actualizacionTransporte(){
         
         int op ;
@@ -58,6 +58,7 @@ public class MenuTransporte {
         long cuanto = getArchiTransp().cantidadRegistros();
         getArchiTransp().cerrarArchivo();
         if (cuanto == 0) {
+            getArchiTransp().crearArchivoVacio(new Registro(getTransporte(), 0));
             do {
                 mostrarMenuTransporte();
                 op = Consola.leerInt();

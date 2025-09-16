@@ -22,7 +22,7 @@ public class GestorEmpresa {
     private static final int LONG = 16;
 
     public static void showOptions() {
-        Consola.emitirMensajeLN(Emisor.titulo("Empresa Transporte", LONG * 3, LONG));
+        Consola.emitirMensajeLN(Emisor.titulo("Empresa Transporte", LONG , LONG));
         Consola.emitirMensajeLN("1. Cargar conductor");
         Consola.emitirMensajeLN("2. Actualizacion de transporte");
         Consola.emitirMensajeLN("3. Listado de sueldos");
@@ -30,36 +30,51 @@ public class GestorEmpresa {
         Consola.emitirMensajeLN("0. Salir");
     }
 
-    public static void menu() {
-        /*try {
-            cond = new Archivo("CONDUCTORES.dat", new Conductores());
+    public GestorEmpresa() {
+        try {
+            setArchiConduc(new Archivo("CONDUCTORES.dat", new Conductor()));
         } catch (ClassNotFoundException e) {
             Consola.emitirMensajeLN("Error al crear los descriptores de archivos: " + e.getMessage());
             System.exit(1);
-        }*/
+        }
+        setReg(new Registro());
+        setConductor(new Conductor());
+        getReg().setDatos(getConductor());
+    }
+    
+    
+    
+    public static void menu() {
+        
         int op;
+        GestorEmpresa gE = new GestorEmpresa();
+        getArchiConduc().abrirParaLeerEscribir();
+        long cuanto = getArchiConduc().cantidadRegistros();
+        getArchiConduc().cerrarArchivo();
+        if (cuanto == 0) {
+            getArchiConduc().crearArchivoVacio(new Registro(getConductor(), 0));
+            do {
+                showOptions();
+                Consola.emitirMensajeLN("--> ");
+                op = Consola.leerInt();
+                switch (op) {
+                    case 1:
+                        cargaDeConductor();
+                        break;
+                    case 2:
+                        MenuTransporte.actualizacionTransporte();
+                        break;
+                    case 3:
+                        //         listadoDeSueldo();
+                        break;
+                    case 4:
+                        listarTransporteXConductor();
+                        break;
 
-        do {
+                }
+            } while (op != 0);
+        }
 
-            showOptions();
-            Consola.emitirMensajeLN("--> ");
-            op = Consola.leerInt();
-            switch (op) {
-                case 1:
-                    cargaDeConductor();
-                    break;
-                case 2:
-                    MenuTransporte.actualizacionTransporte();
-                    break;
-                case 3:
-                    //         listadoDeSueldo();
-                    break;
-                case 4:
-                    listarTransporteXConductor();
-                    break;
-
-            }
-        } while (op != 0);
     }
 
     private static void cargaDeConductor() {
@@ -88,10 +103,9 @@ public class GestorEmpresa {
                 //  para que vuelva a pedir otro dni 
             }
         } while (dni < 0);
-        
-       
-        setConductor(new Conductor());
+
         getConductor().agregarDni(dni);
+        getConductor().cargarDatos(1);
         Registro aux = new Registro(getConductor(),(int) getConductor().getDni()); // Aqui es donde se indica que la clave principal es "dni"
         aux.setEstado(true);
         return aux;

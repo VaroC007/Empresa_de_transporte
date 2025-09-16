@@ -7,6 +7,7 @@ package tpg2_prog_2025;
 
 import datos.*;
 import persistencia.*;
+import tpg2_prog_2025.GestorEmpresa.*;
 
 /**
  *
@@ -18,6 +19,7 @@ public class TPG2_PROG_2025 {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        /*
         try{
             Archivo archiCond= new Archivo("CONDUCTORES.dat", new Conductor());
             GestorEmpresa.setArchiConduc(archiCond);
@@ -32,7 +34,10 @@ public class TPG2_PROG_2025 {
         }catch(Exception e){
             Consola.emitirMensajeLN("Error al crear archivos: "+ e.getMessage());
             
-        }
+        }*/
+        
+        GestorEmpresa.menu();
+        
     }
     
 }
