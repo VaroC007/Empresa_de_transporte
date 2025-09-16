@@ -112,9 +112,9 @@ public class TransporteMercaderia extends Transporte {
     public void grabar(RandomAccessFile file) {
         super.grabar(file);
         try {
-            
-            file.writeBoolean(esPeligroso);
-            file.writeDouble(toneladas);
+            file.writeInt(0);                 // dummy personas
+            file.writeDouble(toneladas);      // valor real
+            file.writeBoolean(esPeligroso);   // valor real
         } catch (IOException e) {
             Consola.emitirMensajeLN("Error al grabar transporte" + e.getMessage());
             System.exit(1);
@@ -125,12 +125,10 @@ public class TransporteMercaderia extends Transporte {
     public void leer(RandomAccessFile file, int val) {
         super.leer(file, 0);
         try {
-            if (val == 0) {
-                codT = file.readInt();
-            }
             
-            esPeligroso = file.readBoolean();
-            toneladas = file.readDouble();
+            file.readInt(); // salto personas dummy
+            this.toneladas = file.readDouble();
+            this.esPeligroso = file.readBoolean();
         } catch (IOException e) {
             Consola.emitirMensajeLN("error al leer el registro: " + e.getMessage());
             System.exit(1);

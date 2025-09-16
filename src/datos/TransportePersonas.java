@@ -44,7 +44,8 @@ public class TransportePersonas extends Transporte {
             p = Consola.leerInt();
         } while (p <= 0);
         this.personas = p;
-    }
+   }
+
 
     @Override
     public void cargarDatos(int val) {
@@ -93,7 +94,8 @@ public class TransportePersonas extends Transporte {
         super.grabar(file);
         try {
             file.writeInt(personas);
-            file
+            file.writeDouble(0.0);      // dummy toneladas
+            file.writeBoolean(false);   // dummy esPeligroso
         } catch (IOException e) {
             Consola.emitirMensajeLN("Error al grabar transporte personas" + e.getMessage());
             System.exit(1);
@@ -104,13 +106,10 @@ public class TransportePersonas extends Transporte {
     public void leer(RandomAccessFile file, int val) {
         super.leer(file, val);
         try {
-            if (val == 0) {
-                codT = file.readInt();
-            }
-            personas = file.readInt();
-            primitivoVacio = file.readInt();
-            charvacio = file.readChar();
-            char2vacio = file.readChar();
+            
+            this.personas = file.readInt();
+            file.readDouble();  // salto toneladas dummy
+            file.readBoolean(); // salto peligroso dummy
 
         } catch (IOException e) {
             Consola.emitirMensajeLN("error al leer el registro: " + e.getMessage());
