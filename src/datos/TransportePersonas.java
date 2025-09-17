@@ -17,12 +17,13 @@ public class TransportePersonas extends Transporte {
     private int personas;
     
     
-    private static int TAMAREG = 35;
+    private static final int TAMREG = 52;
     private static int TAMARCHIVO = 100;
     
     public TransportePersonas() {
         super();
         this.personas = 0;
+        this.tipo = 'P';
         
     }
 
@@ -50,8 +51,10 @@ public class TransportePersonas extends Transporte {
     @Override
     public void cargarDatos(int val) {
         super.cargarDatos(val);
-        cargarPersonas();
         this.extra = calcularExtra();
+        cargarPersonas();
+        this.toneladas = 0.0;
+        this.esPeligroso = false;
     }
 
     @Override
@@ -86,9 +89,9 @@ public class TransportePersonas extends Transporte {
     
     @Override
     public int tamRegistro(){
-        return super.tamRegistro();
+        return tamRegistro();
     }
-    
+ /*   
     @Override
     public void grabar(RandomAccessFile file) {
         super.grabar(file);
@@ -116,7 +119,7 @@ public class TransportePersonas extends Transporte {
             System.exit(1);
         }
     }
-    
+    */
     @Override
     public void agregarCod(int i){
         super.agregarCod(i);

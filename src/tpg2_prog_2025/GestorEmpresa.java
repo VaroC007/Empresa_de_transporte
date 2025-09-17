@@ -15,14 +15,20 @@ import static tpg2_prog_2025.MenuTransporte.getArchiTransp;
  */
 public class GestorEmpresa {
 
-    private static Archivo archiConduc;
-    private static Conductor conductor;
-    private static Registro reg;
-    private static int sueldo = 400000;
-    private static final int LONG = 16;
+    private Archivo archiConduc;
+    private int sueldoFijo = 400000;
 
-    public static void showOptions() {
-        Consola.emitirMensajeLN(Emisor.titulo("Empresa Transporte", LONG , LONG));
+    public GestorEmpresa() {
+        try {
+            archiConduc = new Archivo("CONDUCTORES.dat", new Conductor());
+        } catch (ClassNotFoundException e) {
+            Consola.emitirMensajeLN("Error al crear el archivo de conductores: " + e.getMessage());
+            System.exit(1);
+        }
+    }
+
+    public void showOptions() {
+        Consola.emitirMensajeLN("====== Empresa Transporte ======");
         Consola.emitirMensajeLN("1. Cargar conductor");
         Consola.emitirMensajeLN("2. Actualizacion de transporte");
         Consola.emitirMensajeLN("3. Listado de sueldos");
@@ -30,159 +36,137 @@ public class GestorEmpresa {
         Consola.emitirMensajeLN("0. Salir");
     }
 
-    public GestorEmpresa() {
-        try {
-            setArchiConduc(new Archivo("CONDUCTORES.dat", new Conductor()));
-        } catch (ClassNotFoundException e) {
-            Consola.emitirMensajeLN("Error al crear los descriptores de archivos: " + e.getMessage());
-            System.exit(1);
-        }
-        setReg(new Registro());
-        setConductor(new Conductor());
-        getReg().setDatos(getConductor());
-    }
-    
-    
-    
-    public static void menu() {
-        
+    public void menu() {
         int op;
-        GestorEmpresa gE = new GestorEmpresa();
-        getArchiConduc().abrirParaLeerEscribir();
-        long cuanto = getArchiConduc().cantidadRegistros();
-        getArchiConduc().cerrarArchivo();
-        if (cuanto == 0) {
-            getArchiConduc().crearArchivoVacio(new Registro(getConductor(), 0));
-            do {
-                showOptions();
-                Consola.emitirMensajeLN("--> ");
-                op = Consola.leerInt();
-                switch (op) {
-                    case 1:
-                        cargaDeConductor();
-                        break;
-                    case 2:
-                        MenuTransporte.actualizacionTransporte();
-                        break;
-                    case 3:
-                        //         listadoDeSueldo();
-                        break;
-                    case 4:
-                        listarTransporteXConductor();
-                        break;
+        archiConduc.abrirParaLeerEscribir();
 
-                }
-            } while (op != 0);
-        }
+        do {
+            showOptions();
+            Consola.emitirMensajeLN("--> ");
+            op = Consola.leerInt();
 
+            switch (op) {
+                case 1:
+                    cargaDeConductor();
+                    break;
+                case 2:
+                    new MenuTransporte().actualizacionTransporte();
+                    break;
+                case 3:
+                    listadoDeSueldos();
+                    break;
+                case 4:
+                    listarTransporteXConductor();
+                    break;
+            }
+        } while (op != 0);
+
+        archiConduc.cerrarArchivo();
     }
 
-    private static void cargaDeConductor() {
-        archiConduc.abrirParaLeerEscribir();
+    private void cargaDeConductor() {
         try {
             do {
-                reg = leerDatosCond();
-                archiConduc.cargarUnRegistro(getReg());
+                Registro reg = leerDatosCond();
+                archiConduc.cargarUnRegistro(reg);
             } while (Consola.confirmar());
         } catch (Exception e) {
             Consola.emitirMensajeLN("Error al cargar el archivo: " + e.getMessage());
-            System.exit(1);
         }
-        archiConduc.cerrarArchivo();
     }
 
-    private static Registro leerDatosCond() {
-       
+    private Registro leerDatosCond() {
+        Conductor conductor = new Conductor();
         long dni;
+
         do {
             Consola.emitirMensajeLN("DNI del conductor: ");
-            dni = Consola.leerInt();
+            dni = Consola.leerLong();
             if (existeDni(dni) != null) {
-                Consola.emitirMensajeLN("Dni ya existente.");
-                dni = -1; //  Invalidar codigo si ya existe el conductor, 
-                //  para que vuelva a pedir otro dni 
+                Consola.emitirMensajeLN("Conductor existente. Ingrese otro DNI.");
+                dni = -1;
             }
         } while (dni < 0);
 
-        getConductor().agregarDni(dni);
-        getConductor().cargarDatos(1);
-        Registro aux = new Registro(getConductor(),(int) getConductor().getDni()); // Aqui es donde se indica que la clave principal es "dni"
-        aux.setEstado(true);
-        return aux;
+        conductor.agregarDni(dni);
+        conductor.cargarDatos(1); // otros datos del conductor
+
+        Registro reg = new Registro(conductor, (int) dni);
+        reg.setEstado(true);
+        return reg;
     }
 
-    //metodo que va a buscar los registros del conductor en el archivo de conductores para luego comparar dni
-    public static Registro existeDni(long dni) {
-        archiConduc.abrirParaLectura();
+    public Registro existeDni(long dni) {
         archiConduc.irPrincipioArchivo();
-        while (!archiConduc.eof()) {                                //me posicion al principio del archivo
-            Registro aux = archiConduc.leerRegistro();             //referencia reg para tener los datos del registro
-            if (aux.getEstado()) {                           //si esta activo realizo un casting y pregunto por dni
-                Conductor c = (Conductor) aux.getDatos();
+        while (!archiConduc.eof()) {
+            Registro reg = archiConduc.leerRegistro();
+            if (reg.getEstado()) {
+                Conductor c = (Conductor) reg.getDatos();
                 if (c.getDni() == dni) {
-                    archiConduc.cerrarArchivo();
-                    return aux;
+                    return reg;
                 }
             }
         }
-        archiConduc.cerrarArchivo();
         return null;
     }
-    /*Recorrer CONDUCTORES.DAT y para cada conductor activo, sumar:
- Sueldo fijo
- $7.500 × total horas de todos sus transportes activos
- Total de montos extras
-    Mostrar: DNI, apellido y nombre, sueldo final.
-*/
-    public static void listadoDeSueldos(){
-        getArchiConduc().abrirParaLectura();
-        Archivo auxA = getArchiTransp();
-        while(!getArchiConduc().eof()){
-            Registro auxR = getArchiConduc().leerRegistro();    //obtengo el registro en una posicion
-            if(auxR.getEstado()){
-                Conductor auxC = (Conductor) auxR.getDatos();
-                auxA.abrirParaLectura();
-                while(!auxA.eof()){
-                    Registro auxT = auxA.leerRegistro();
-                    
+
+    public void listadoDeSueldos() {
+        archiConduc.irPrincipioArchivo();
+        Archivo archiTransp = getArchiTransp();
+
+        Consola.emitirMensajeLN(String.format("%-12s %-15s %-15s %-10s", "DNI", "Apellido", "Nombre", "Sueldo"));
+
+        while (!archiConduc.eof()) {
+            Registro regC = archiConduc.leerRegistro();
+            if (regC.getEstado()) {
+                Conductor c = (Conductor) regC.getDatos();
+                double totalHoras = 0;
+                double totalExtras = 0;
+
+                archiTransp.irPrincipioArchivo();
+                while (!archiTransp.eof()) {
+                    Registro regT = archiTransp.leerRegistro();
+                    if (regT.getEstado()) {
+                        Transporte t = (Transporte) regT.getDatos();
+                        if (t.getDniConductor() == c.getDni()) {
+                            totalHoras += t.getHoras();
+                            totalExtras += t.getExtra();
+                        }
+                    }
                 }
-                
-                
+
+                double sueldoFinal = sueldoFijo + (7500 * totalHoras) + totalExtras;
+                Consola.emitirMensajeLN(String.format("%-12d %-15s %-15s %-10.2f",
+                        c.getDni(), c.getApe_Nom(), sueldoFinal));
             }
-            
         }
     }
-    
-    
-    
-    public static void listarTransporteXConductor() {
-        Archivo auxA = getArchiTransp();
 
-        auxA.abrirParaLectura();
+    public void listarTransporteXConductor() {
+        Archivo archiTransp = getArchiTransp();
+        archiTransp.irPrincipioArchivo();
 
-        auxA.irPrincipioArchivo();
         Consola.emitirMensajeLN("LISTADO TRANSPORTE POR CONDUCTOR");
-        Consola.emitirMensajeLN(String.format("%-10s %-15s %-12s %-25s %-12s %-20s", "Cod.T", "Tipo", "Extra", "Detalle", "DNI", "Conductor"));
-        while (!auxA.eof()) {
-            Registro auxR = auxA.leerRegistro();
-
-            if (auxR.getEstado()) {                   //estado del registro (si esta activo)
-                Transporte auxT = (Transporte) auxR.getDatos();    //casting para luego comparar DNI con conductor
-                Registro regC = existeDni(auxT.getDniConductor());  //paso el DNI del Transporte para buscar en archivos conducotres
+        while (!archiTransp.eof()) {
+            Registro regT = archiTransp.leerRegistro();
+            if (regT.getEstado()) {
+                Transporte t = (Transporte) regT.getDatos();
+                Registro regC = existeDni(t.getDniConductor());
                 if (regC != null) {
-                    Conductor auxC = (Conductor) regC.getDatos();
-                    auxT.mostrarRegistro(1,true);                         //muestro los datos del Transporte
-                    auxC.mostrarRegistro(1,true); //muestro los datos del Conductor
+                    Conductor c = (Conductor) regC.getDatos();
+                    t.mostrarRegistro(1, true);
+                    c.mostrarRegistro(1, true);
                     Consola.emitirMensajeLN("");
                 }
             }
         }
     }
 
-    public static Archivo getArchiConduc() {
+    /*public static Archivo getArchiConduc() {
         return archiConduc;
     }
 
+    
     public static Conductor getConductor() {
         return conductor;
     }
@@ -201,8 +185,8 @@ public class GestorEmpresa {
 
     public static void setReg(Registro reg) {
         GestorEmpresa.reg = reg;
-    }
-    /********************GETTERS Y SETTERS****************************/
-    
-
+    }*/
+    /**
+     * ******************GETTERS Y SETTERS***************************
+     */
 }

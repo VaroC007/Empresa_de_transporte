@@ -17,13 +17,14 @@ public class TransporteMercaderia extends Transporte {
     private double toneladas;
     private boolean esPeligroso;
     
-    private static int TAMAREG = 35;
+    private static final int TAMREG = 52;
     private static int TAMARCHIVO = 100;
 
     public TransporteMercaderia() {
         super();
         this.toneladas = 0.0;
         this.esPeligroso = false;
+        this.tipo = 'M';
     }
 
     public double getToneladas() {
@@ -37,9 +38,10 @@ public class TransporteMercaderia extends Transporte {
     @Override
     public void cargarDatos(int val) {
         super.cargarDatos(val);
+        this.extra = calcularExtra();
         cargarToneladas();
         cargarEsPeligroso();
-        this.extra = calcularExtra();
+        this.personas = 0;
     }
     
     public void setToneladas(double toneladas) {
@@ -105,9 +107,10 @@ public class TransporteMercaderia extends Transporte {
 
     @Override
     public int tamRegistro() {
-        return super.tamRegistro();
+        
+        return tamRegistro();
     }
-    
+ /*   
     @Override
     public void grabar(RandomAccessFile file) {
         super.grabar(file);
@@ -134,7 +137,7 @@ public class TransporteMercaderia extends Transporte {
             System.exit(1);
         }
     }
-    
+    */
     @Override
     public void agregarCod(int i){
         super.agregarCod(i);

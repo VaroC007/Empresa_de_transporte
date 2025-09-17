@@ -20,9 +20,12 @@ public abstract class Transporte implements Grabable, ICalculable {
     protected int horas;
     protected long dniConductor;
     protected double extra;  //monto calculado
+    protected int personas;
+    protected double toneladas;
+    protected boolean esPeligroso;
     
     private static int TAMARCHIVO = 100;
-    private static int TAMREG = 52; //bytes
+    
 
     public Transporte() {
         this.codT = 0;
@@ -52,10 +55,13 @@ public abstract class Transporte implements Grabable, ICalculable {
         return extra;
     }
 
+    /*
     @Override
     public int tamRegistro() {
         return TAMREG;
-    }
+    }*/
+    @Override
+    public abstract int tamRegistro();
 
     @Override
     public int tamArchivo() {
@@ -133,7 +139,7 @@ public abstract class Transporte implements Grabable, ICalculable {
     }*/
     @Override
     public abstract double calcularExtra();
-
+    
     @Override
     public void grabar(RandomAccessFile file) {
         try {
@@ -142,6 +148,9 @@ public abstract class Transporte implements Grabable, ICalculable {
             file.writeInt(horas);
             file.writeLong(dniConductor);
             file.writeDouble(extra);
+            file.writeInt(personas);
+            file.writeDouble(toneladas);      // dummy toneladas
+            file.writeBoolean(esPeligroso);   // dummy esPeligroso
         } catch (IOException e) {
             Consola.emitirMensajeLN("Error al grabar transporte" + e.getMessage());
             System.exit(1);
@@ -158,6 +167,9 @@ public abstract class Transporte implements Grabable, ICalculable {
             horas = file.readInt();
             dniConductor = file.readLong();
             extra = file.readDouble();
+            personas = file.readInt();
+            toneladas = file.readDouble();  // salto toneladas dummy
+            esPeligroso = file.readBoolean(); // salto peligroso dummy
         } catch (IOException e) {
             Consola.emitirMensajeLN("error al leer el registro: " + e.getMessage());
             System.exit(1);
