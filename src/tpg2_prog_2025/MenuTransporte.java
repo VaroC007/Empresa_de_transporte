@@ -61,7 +61,7 @@ public class MenuTransporte {
         try {
             do {
                 Registro reg = leerDatosTransp();
-                archiTransp.cargarUnRegistro(reg);
+                archiTransp.grabarRegistro(reg);
             } while (Consola.confirmar());
         } catch (Exception e) {
             Consola.emitirMensajeLN("Error al cargar transporte: " + e.getMessage());

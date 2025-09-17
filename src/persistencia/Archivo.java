@@ -155,6 +155,7 @@ public class Archivo {
      */
     public void buscarRegistro(long i) {
         try {
+                System.out.println("3 ARCHIVO. buscarREGISTRO");
             maestro.seek(0);
             maestro.seek(i * reg.tamRegistro());
         } catch (IOException e) {
@@ -283,13 +284,13 @@ public class Archivo {
      * @param r el registro a grabar
      */
     public void grabarRegistro(Registro r) {
-        System.out.println("archivo. grabar registro. La clase del registro es: " + r.getDatos().getClass());
-        System.out.println("archivo. grabar registro. Y los datos del registro son: " + r.getDatos());
+        System.out.println("2 ARCHIVO. grabar registro. La clase del registro es: " + r.getDatos().getClass());
+        System.out.println("2 ARCHIVO. grabar registro. Y los datos del registro son: " + r.getDatos());
         //if (r != null && (r.getDatos().getClass() == tipo.getClass()))
         if (r != null && (r.getDatos() instanceof Grabable)) {
-            System.out.println("Archivo. grabarRegistro. entra a la condicion if");
+            System.out.println("2 ARCHIVO. grabarRegistro. entra a la condicion if");
             try {
-                System.out.println("archivo. grabar registro");
+                System.out.println("2 ARCHIVO. grabar registro");
                 buscarRegistro(r.getNroOrden());
                 r.grabar(maestro);
             } catch (Exception e) {
@@ -362,17 +363,18 @@ public class Archivo {
      */
     public void cargarUnRegistro(Registro r) {
         abrirParaLeerEscribir();
-        
+
         try {
-                grabarRegistro(r);
-                System.out.println("archivo. cargarUnRegistro. se grabò el registro");
+            System.out.println("1 ARCHIVO. cargarUNregistro. se grabò el registro");
+            grabarRegistro(r);
+
         } catch (Exception e) {
             System.out.println("Error al grabar el registro: " + e.getMessage());
             System.exit(1);
         }
 
-        cerrarArchivo();     
-}
+        cerrarArchivo();
+    }
  
     /**
      * Borra un registro del archivo. La clase del registro buscado debe

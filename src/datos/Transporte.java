@@ -143,9 +143,9 @@ public abstract class Transporte implements Grabable, ICalculable {
     @Override
     public void grabar(RandomAccessFile file) {
         if (tipo == 'P'){
-            System.out.println("TRANSPORTE. GRABAR. GRABACION TRANSPORTE PERSONAS");
+            System.out.println("3 TRANSPORTE. GRABAR. GRABACION TRANSPORTE PERSONAS");
         } else {
-            System.out.println("Transporte. GRABAR. GRABACION TRANSPORTE MERCADERIA");
+            System.out.println("3 Transporte. GRABAR. GRABACION TRANSPORTE MERCADERIA");
         }
         
         try {

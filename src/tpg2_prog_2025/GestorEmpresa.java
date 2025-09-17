@@ -68,7 +68,7 @@ public class GestorEmpresa {
         try {
             do {
                 Registro reg = leerDatosCond();
-                archiConduc.cargarUnRegistro(reg);
+                archiConduc.grabarRegistro(reg);
             } while (Consola.confirmar());
         } catch (Exception e) {
             Consola.emitirMensajeLN("Error al cargar el archivo: " + e.getMessage());
