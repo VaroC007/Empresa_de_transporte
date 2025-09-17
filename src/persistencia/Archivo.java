@@ -111,6 +111,7 @@ public class Archivo {
      * previamente. Queda posicionado al principio del archivo.
      */
     public void abrirParaLectura() {
+        System.out.println("-ARCHIVO. abrirPARALECTURA. el archivo es de tipo " + reg.getDatos().getClass());
         try {
             maestro = new RandomAccessFile(fd, "r");
         } catch (IOException e) {
@@ -155,14 +156,13 @@ public class Archivo {
      */
     public void buscarRegistro(long i) {
         try {
-                System.out.println("3 ARCHIVO. buscarREGISTRO");
-            maestro.seek(0);
+            System.out.println("3 ARCHIVO. buscarREGISTRO");
+            maestro.seek(1);
             maestro.seek(i * reg.tamRegistro());
         } catch (IOException e) {
             System.out.println("Error al posicionar en el registro número " + i + ": " + e.getMessage());
             System.exit(1);
         }
-        
     }
 
     /**
@@ -186,6 +186,7 @@ public class Archivo {
      * cero
      */
     public void irPrincipioArchivo() {
+        System.out.println("-ARCHIVO. irPrincipioArchivo. registro de tipo " + reg.getDatos().getClass());
         try {
             maestro.seek(0);
             System.out.println("clase archivo. esta al principio del archivo");

@@ -100,8 +100,11 @@ public class MenuTransporte {
             }
         } while (cod < 0);
 
-        if (tipo == 1) t = new TransportePersonas();
-        else t = new TransporteMercaderia();
+        if (tipo == 1) {
+            t = new TransportePersonas();
+        } else {
+            t = new TransporteMercaderia();
+        }
         
         t.agregarCod(cod);
         t.agregarDni(dni);

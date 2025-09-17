@@ -17,7 +17,7 @@ public class TransportePersonas extends Transporte {
    // private int personas;
     
     
-    private static final int TAMREG = 52;
+    private static final int TAMREG = 39;
     private static int TAMARCHIVO = 100;
     
     public TransportePersonas() {
@@ -53,7 +53,7 @@ public class TransportePersonas extends Transporte {
         super.cargarDatos(val);
         this.extra = calcularExtra();
         cargarPersonas();
-        this.toneladas = 0.0;
+        this.toneladas = 0;
         this.esPeligroso = false;
     }
 

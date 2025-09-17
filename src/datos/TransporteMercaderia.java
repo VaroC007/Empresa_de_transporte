@@ -17,12 +17,12 @@ public class TransporteMercaderia extends Transporte {
 //    private double toneladas;
 //    private boolean esPeligroso;
     
-    private static final int TAMREG = 52;
+    private static final int TAMREG = 39;
     private static int TAMARCHIVO = 100;
 
     public TransporteMercaderia() {
         super();
-        this.toneladas = 0.0;
+        this.toneladas = 0;
         this.esPeligroso = false;
         this.tipo = 'M';
     }
@@ -38,13 +38,14 @@ public class TransporteMercaderia extends Transporte {
     @Override
     public void cargarDatos(int val) {
         super.cargarDatos(val);
-        this.extra = calcularExtra();
         cargarToneladas();
         cargarEsPeligroso();
+        this.extra = calcularExtra();   // ahora sí, con toneladas y peligroso ya definidos
         this.personas = 0;
     }
+
     
-    public void setToneladas(double toneladas) {
+    public void setToneladas(float toneladas) {
         if (toneladas < 0) {
             throw new IllegalArgumentException("Las toneladas no pueden ser negativas.");
         }
@@ -74,6 +75,7 @@ public class TransporteMercaderia extends Transporte {
         this.esPeligroso = (resp == 'S' || resp == 's');
     }
 
+    
     @Override
     public double calcularExtra() {
         double base = 7000 * toneladas;

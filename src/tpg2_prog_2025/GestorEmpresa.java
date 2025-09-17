@@ -81,7 +81,7 @@ public class GestorEmpresa {
 
         do {
             Consola.emitirMensajeLN("DNI del conductor: ");
-            dni = (long) Consola.leerInt();
+            dni = Consola.leerInteger();
             if (existeDni(dni) != null) {
                 Consola.emitirMensajeLN("Conductor existente. Ingrese otro DNI.");
                 dni = -1;
@@ -105,6 +105,7 @@ public class GestorEmpresa {
             if (reg.getEstado()) {
                 Conductor c = (Conductor) reg.getDatos();
                 if (c.getDni() == dni) {
+                    System.out.println("-GESTOREMPRESA. existe el dni");
                     archiConduc.cerrarArchivo();
                     return reg;
                 }

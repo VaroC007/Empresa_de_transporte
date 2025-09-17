@@ -29,9 +29,9 @@ public abstract class Transporte implements Grabable, ICalculable {
 
     public Transporte() {
         this.codT = 0;
-        this.tipo = 'p';
+        this.tipo = ' ';
         this.dniConductor = 0;
-        this.extra = 0.0;
+        this.extra = 0;
 
     }
 
@@ -73,7 +73,7 @@ public abstract class Transporte implements Grabable, ICalculable {
         if (val == 0) {
             cargarCodT();
         }
-        cargarTipo();
+    //    cargarTipo();
         cargarHoras();
        // cargarDniConductor();
     }
@@ -180,7 +180,7 @@ public abstract class Transporte implements Grabable, ICalculable {
             dniConductor = file.readLong();
             extra = file.readDouble();
             personas = file.readInt();
-            toneladas = file.readDouble();  // salto toneladas dummy
+            toneladas = file.readFloat();  // salto toneladas dummy
             esPeligroso = file.readBoolean(); // salto peligroso dummy
         } catch (IOException e) {
             Consola.emitirMensajeLN("error al leer el registro: " + e.getMessage());
