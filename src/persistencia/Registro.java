@@ -147,8 +147,8 @@ public class Registro implements Grabable {
     @Override
     public void leer(RandomAccessFile a, int val) {
         try {
-            System.out.println("registro. LEER. numero de orden" + nroOrden);
-            System.out.println("registro. LEER. estado " + estado);
+            System.out.println("4 REGISTRO. LEER. numero de orden" + nroOrden);
+            System.out.println("4 REGISTRO. LEER. estado " + estado);
             
             nroOrden = a.readInt();
             estado = a.readBoolean();
