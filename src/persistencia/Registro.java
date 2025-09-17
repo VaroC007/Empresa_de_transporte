@@ -128,8 +128,8 @@ public class Registro implements Grabable {
     @Override
     public void grabar(RandomAccessFile a) {
         try {
-            System.out.println("3 REGISTRO. GRABAR. numero de orden " + nroOrden);
-            System.out.println("3 REGISTRO. GRABAR. estado " + estado);
+            System.out.println("4 REGISTRO. GRABAR. numero de orden " + nroOrden);
+            System.out.println("4 REGISTRO. GRABAR. estado " + estado);
             a.writeInt(nroOrden);
             a.writeBoolean(estado);
             datos.grabar(a);
