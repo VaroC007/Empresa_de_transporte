@@ -90,6 +90,7 @@ public class Conductor implements Grabable {
 
     @Override
     public void grabar(RandomAccessFile a) {
+        System.out.println("CONDUCTOR. GRABAR. GRABACION CONDUCTOR");
         try {
             a.writeLong(dni);
             Registro.writeString(a, Ape_Nom, 20);
@@ -100,6 +101,7 @@ public class Conductor implements Grabable {
 
     @Override
     public void leer(RandomAccessFile a, int val) {
+        System.out.println("CONDUCTOR. LEER. LECTURA CONDUCTOR");
         try {
             if (val == 0) {
                 this.dni = a.readLong();

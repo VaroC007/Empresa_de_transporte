@@ -6,21 +6,24 @@
 package tpg2_prog_2025;
 
 import datos.*;
+import java.io.RandomAccessFile;
 import persistencia.*;
 import tpg2_prog_2025.GestorEmpresa.*;
 
 public class MenuTransporte {
 
     private static Archivo archiTransp;
-
-    public MenuTransporte() {
-        try {
-            archiTransp = new Archivo("TRANSPORTES.dat", new TransporteMercaderia());
-        } catch (ClassNotFoundException e) {
+   
+    public MenuTransporte(){
+        try{
+            archiTransp = new Archivo("TRANSPORTE.dat", new TransporteMercaderia());
+        } catch(ClassNotFoundException e){
             Consola.emitirMensajeLN("Error al crear el archivo de transportes: " + e.getMessage());
             System.exit(1);
         }
     }
+        
+    
 
     public void mostrarMenuTransporte() {
         Consola.emitirMensajeLN("-ACTUALIZACION DE TRANSPORTE-");
@@ -59,7 +62,6 @@ public class MenuTransporte {
             do {
                 Registro reg = leerDatosTransp();
                 archiTransp.cargarUnRegistro(reg);
-                System.out.println("menutransporte se cargò el transporte en ek archivo");
             } while (Consola.confirmar());
         } catch (Exception e) {
             Consola.emitirMensajeLN("Error al cargar transporte: " + e.getMessage());
@@ -93,14 +95,14 @@ public class MenuTransporte {
             if (obtenerTransporte(cod) != null) {
                 Consola.emitirMensajeLN("Alta existente.");
                 cod = -1;
+            } else {
+                System.out.println("menutransporte. leerdatostransp. no existe transporte con ese codigo");
             }
         } while (cod < 0);
 
         if (tipo == 1) t = new TransportePersonas();
         else t = new TransporteMercaderia();
-        if (t instanceof TransportePersonas){
-            System.out.println("menutransporte. t es de tipo persona");
-        }
+        
         t.agregarCod(cod);
         t.agregarDni(dni);
         t.cargarDatos(1); // carga de atributos propios

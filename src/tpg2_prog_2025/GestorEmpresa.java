@@ -114,6 +114,7 @@ public class GestorEmpresa {
     }
 
     public void listadoDeSueldos() {
+        archiConduc.abrirParaLectura();
         archiConduc.irPrincipioArchivo();
         Archivo archiTransp = MenuTransporte.getArchiTransp();
 

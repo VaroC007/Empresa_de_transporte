@@ -283,7 +283,11 @@ public class Archivo {
      * @param r el registro a grabar
      */
     public void grabarRegistro(Registro r) {
-        if (r != null && (r.getDatos().getClass() == tipo.getClass())) {
+        System.out.println("archivo. grabar registro. La clase del registro es: " + r.getDatos().getClass());
+        System.out.println("archivo. grabar registro. Y los datos del registro son: " + r.getDatos());
+        //if (r != null && (r.getDatos().getClass() == tipo.getClass()))
+        if (r != null && (r.getDatos() instanceof Grabable)) {
+            System.out.println("Archivo. grabarRegistro. entra a la condicion if");
             try {
                 System.out.println("archivo. grabar registro");
                 buscarRegistro(r.getNroOrden());
@@ -294,6 +298,8 @@ public class Archivo {
             }
         }
     }
+    
+    
 
     /**
      * Lee un registro del archivo
@@ -359,7 +365,7 @@ public class Archivo {
         
         try {
                 grabarRegistro(r);
-                System.out.println("archivo. se grabò el registro");
+                System.out.println("archivo. cargarUnRegistro. se grabò el registro");
         } catch (Exception e) {
             System.out.println("Error al grabar el registro: " + e.getMessage());
             System.exit(1);
