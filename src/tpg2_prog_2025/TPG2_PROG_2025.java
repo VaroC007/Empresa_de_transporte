@@ -35,8 +35,9 @@ public class TPG2_PROG_2025 {
             Consola.emitirMensajeLN("Error al crear archivos: "+ e.getMessage());
             
         }*/
+        GestorEmpresa ge = new GestorEmpresa();
         System.out.println("HOLA");
-        GestorEmpresa.menu();
+        ge.menu();
         
     }
     

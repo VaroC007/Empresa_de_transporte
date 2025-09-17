@@ -187,6 +187,7 @@ public class Archivo {
     public void irPrincipioArchivo() {
         try {
             maestro.seek(0);
+            System.out.println("clase archivo. esta al principio del archivo");
         } catch (IOException e) {
             System.out.println("Error al ir al principio del archivo: " + e.getMessage());
             System.exit(1);
@@ -302,6 +303,11 @@ public class Archivo {
     public Registro leerRegistro() {
         try {
             reg.leer(maestro, 0);
+          /*  if(reg.getEstado()){
+                System.out.println("archivo. leer registro el estado es verdadero");
+                reg.leer(maestro, 0);
+                return reg;
+            }*/
             return reg;
         } catch (Exception e) {
             System.out.println("Error al leer el registro: " + e.getMessage());
@@ -349,8 +355,10 @@ public class Archivo {
      */
     public void cargarUnRegistro(Registro r) {
         abrirParaLeerEscribir();
+        
         try {
                 grabarRegistro(r);
+                System.out.println("archivo. se grabò el registro");
         } catch (Exception e) {
             System.out.println("Error al grabar el registro: " + e.getMessage());
             System.exit(1);

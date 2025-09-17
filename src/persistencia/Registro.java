@@ -128,6 +128,8 @@ public class Registro implements Grabable {
     @Override
     public void grabar(RandomAccessFile a) {
         try {
+            System.out.println("registro. grabar. numero de orden" + nroOrden);
+            System.out.println("registro. grabar. estado" + estado);
             a.writeInt(nroOrden);
             a.writeBoolean(estado);
             datos.grabar(a);
@@ -145,6 +147,9 @@ public class Registro implements Grabable {
     @Override
     public void leer(RandomAccessFile a, int val) {
         try {
+            System.out.println("registro. leer. numero de orden" + nroOrden);
+            System.out.println("registro. leer. estado " + estado);
+            
             nroOrden = a.readInt();
             estado = a.readBoolean();
             datos.leer(a, val); // convoca al metodo de lectura especifico a los datos del registro

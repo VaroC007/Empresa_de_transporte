@@ -14,7 +14,7 @@ import tpg2_prog_2025.Consola;
  */
 public class TransportePersonas extends Transporte {
 
-    private int personas;
+   // private int personas;
     
     
     private static final int TAMREG = 52;
@@ -89,7 +89,7 @@ public class TransportePersonas extends Transporte {
     
     @Override
     public int tamRegistro(){
-        return tamRegistro();
+        return TAMREG;
     }
  /*   
     @Override

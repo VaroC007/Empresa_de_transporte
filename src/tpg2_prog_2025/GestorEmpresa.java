@@ -15,7 +15,7 @@ import static tpg2_prog_2025.MenuTransporte.getArchiTransp;
  */
 public class GestorEmpresa {
 
-    private Archivo archiConduc;
+    private static Archivo archiConduc;
     private int sueldoFijo = 400000;
 
     public GestorEmpresa() {
@@ -81,7 +81,7 @@ public class GestorEmpresa {
 
         do {
             Consola.emitirMensajeLN("DNI del conductor: ");
-            dni = Consola.leerLong();
+            dni = (long) Consola.leerInt();
             if (existeDni(dni) != null) {
                 Consola.emitirMensajeLN("Conductor existente. Ingrese otro DNI.");
                 dni = -1;
@@ -92,17 +92,20 @@ public class GestorEmpresa {
         conductor.cargarDatos(1); // otros datos del conductor
 
         Registro reg = new Registro(conductor, (int) dni);
-        reg.setEstado(true);
+      //  reg.setEstado(true);
         return reg;
     }
 
-    public Registro existeDni(long dni) {
+    public static Registro existeDni(long dni) {
+        System.out.println("gestorempresa. metodo existe dni");
+        archiConduc.abrirParaLectura();
         archiConduc.irPrincipioArchivo();
         while (!archiConduc.eof()) {
             Registro reg = archiConduc.leerRegistro();
             if (reg.getEstado()) {
                 Conductor c = (Conductor) reg.getDatos();
                 if (c.getDni() == dni) {
+                    archiConduc.cerrarArchivo();
                     return reg;
                 }
             }
@@ -112,7 +115,7 @@ public class GestorEmpresa {
 
     public void listadoDeSueldos() {
         archiConduc.irPrincipioArchivo();
-        Archivo archiTransp = getArchiTransp();
+        Archivo archiTransp = MenuTransporte.getArchiTransp();
 
         Consola.emitirMensajeLN(String.format("%-12s %-15s %-15s %-10s", "DNI", "Apellido", "Nombre", "Sueldo"));
 
@@ -144,10 +147,12 @@ public class GestorEmpresa {
 
     public void listarTransporteXConductor() {
         Archivo archiTransp = getArchiTransp();
+        archiTransp.abrirParaLectura();
         archiTransp.irPrincipioArchivo();
 
         Consola.emitirMensajeLN("LISTADO TRANSPORTE POR CONDUCTOR");
         while (!archiTransp.eof()) {
+            System.out.println("PRUEBA ENTRO AL WHILE DE LISTARXCONDUCTOR");
             Registro regT = archiTransp.leerRegistro();
             if (regT.getEstado()) {
                 Transporte t = (Transporte) regT.getDatos();
@@ -160,6 +165,7 @@ public class GestorEmpresa {
                 }
             }
         }
+        archiTransp.cerrarArchivo();
     }
 
     /*public static Archivo getArchiConduc() {

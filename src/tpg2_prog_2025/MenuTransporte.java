@@ -7,11 +7,11 @@ package tpg2_prog_2025;
 
 import datos.*;
 import persistencia.*;
-import static tpg2_prog_2025.GestorEmpresa.*;
+import tpg2_prog_2025.GestorEmpresa.*;
 
 public class MenuTransporte {
 
-    private Archivo archiTransp;
+    private static Archivo archiTransp;
 
     public MenuTransporte() {
         try {
@@ -59,13 +59,14 @@ public class MenuTransporte {
             do {
                 Registro reg = leerDatosTransp();
                 archiTransp.cargarUnRegistro(reg);
+                System.out.println("menutransporte se cargò el transporte en ek archivo");
             } while (Consola.confirmar());
         } catch (Exception e) {
             Consola.emitirMensajeLN("Error al cargar transporte: " + e.getMessage());
         }
     }
 
-    private Registro leerDatosTransp() {
+    private  Registro leerDatosTransp() {
         Consola.emitirMensajeLN("1. Transporte para personas");
         Consola.emitirMensajeLN("2. Transporte de mercaderia");
         Consola.emitirMensaje("Elija una opcion: ");
@@ -78,8 +79,8 @@ public class MenuTransporte {
         // Validar DNI
         do {
             Consola.emitirMensajeLN("DNI del conductor: ");
-            dni = Consola.leerInteger();
-            if (existeDni(dni) == null) {
+            dni = (long)Consola.leerInt();
+            if (GestorEmpresa.existeDni(dni) == null) {
                 Consola.emitirMensajeLN("Conductor inexistente.");
                 dni = -1;
             }
@@ -97,13 +98,15 @@ public class MenuTransporte {
 
         if (tipo == 1) t = new TransportePersonas();
         else t = new TransporteMercaderia();
-
+        if (t instanceof TransportePersonas){
+            System.out.println("menutransporte. t es de tipo persona");
+        }
         t.agregarCod(cod);
         t.agregarDni(dni);
         t.cargarDatos(1); // carga de atributos propios
 
         Registro reg = new Registro(t, t.getCodT());
-        reg.setEstado(true);
+       // reg.setEstado(true);
         return reg;
     }
 
@@ -149,6 +152,7 @@ public class MenuTransporte {
     }
 
     private Registro obtenerTransporte(int cod) {
+        archiTransp.abrirParaLectura();
         archiTransp.irPrincipioArchivo();
         while (!archiTransp.eof()) {
             Registro reg = archiTransp.leerRegistro();
@@ -157,10 +161,11 @@ public class MenuTransporte {
                 if (t.getCodT() == cod) return reg;
             }
         }
+        archiTransp.cerrarArchivo();
         return null;
     }
 
-    public Archivo getArchTransp() {
+    public static Archivo getArchiTransp() {
         return archiTransp;
     }
 }

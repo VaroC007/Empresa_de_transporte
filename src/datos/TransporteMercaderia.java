@@ -14,8 +14,8 @@ import tpg2_prog_2025.Consola;
  */
 public class TransporteMercaderia extends Transporte {
 
-    private double toneladas;
-    private boolean esPeligroso;
+//    private double toneladas;
+//    private boolean esPeligroso;
     
     private static final int TAMREG = 52;
     private static int TAMARCHIVO = 100;
@@ -106,9 +106,8 @@ public class TransporteMercaderia extends Transporte {
     }
 
     @Override
-    public int tamRegistro() {
-        
-        return tamRegistro();
+    public int tamRegistro(){
+        return TAMREG;
     }
  /*   
     @Override
