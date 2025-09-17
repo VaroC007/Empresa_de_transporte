@@ -285,6 +285,7 @@ public class Archivo {
     public void grabarRegistro(Registro r) {
         if (r != null && (r.getDatos().getClass() == tipo.getClass())) {
             try {
+                System.out.println("archivo. grabar registro");
                 buscarRegistro(r.getNroOrden());
                 r.grabar(maestro);
             } catch (Exception e) {
